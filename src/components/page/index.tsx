@@ -12,7 +12,7 @@ import MobileBottomNav from "./mobile-bottom-nav";
 
 const FollowingSideNav = () => {
   return (
-    <VStack width="15rem" pt="2" alignItems="stretch" flexShrink={0}>
+    <VStack width="0rem" pt="2" alignItems="stretch" flexShrink={0}>
       <Heading size="md">Following</Heading>
       <FollowingList />
     </VStack>

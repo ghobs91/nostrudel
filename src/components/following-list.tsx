@@ -34,7 +34,7 @@ export const FollowingList = () => {
   if (!following) return <SkeletonText />;
 
   return (
-    <Box overflow="auto" pr="2" pb="4" pt="2">
+    <Box className="following-list" overflow="auto" pr="2" pb="4" pt="2">
       <Flex direction="column" gap="2">
         {following.map((pTag) => (
           <FollowingListItem key={pTag[1]} pubkey={pTag[1]} />
