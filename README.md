@@ -21,7 +21,7 @@ I would recomend you use a browser extension like [Alby](https://getalby.com/) o
 ## Current Features
 
 - [x] Home feed
-- [ ] Discovery Feed
+- [x] Discovery Feed
 - [x] Dark theme
 - [x] Preview twitter / youtube links
 - [x] Lighting invoices
@@ -33,12 +33,12 @@ I would recomend you use a browser extension like [Alby](https://getalby.com/) o
 - [x] Manage followers ( Contact List )
 - [x] Relay management
 - [x] Profile management
-- [ ] Image upload
-- [ ] Reactions
+- [x] Image upload
+- [x] Reactions
 - [ ] Dynamically connect to relays (start with one relay then connect to others as required)
 - [ ] Reporting users and events
 - [ ] Blocking users
-- [ ] Notifications
+- [x] Notifications
 
 ## Supported NIPs
 
