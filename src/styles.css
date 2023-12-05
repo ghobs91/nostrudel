@@ -5,3 +5,14 @@ body,
   height: 100%;
   width: 100%;
 }
+.card-container {
+  padding: 10px;
+  line-height: 1.4;
+  -webkit-box-align: start;
+  align-items: flex-start;
+  position: relative;
+  font-size: var(--text-size);
+  border-radius: .75rem !important;
+  box-shadow: 0 0 10px #000000bf !important;
+  background-color: #242526 !important;
+}

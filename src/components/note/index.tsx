@@ -90,7 +90,7 @@ export const Note = React.memo(
     return (
       <TrustProvider event={event}>
         <ExpandProvider>
-          <Card
+          <Card className="card-container"
             as={LinkBox}
             variant={variant}
             ref={registerIntersectionEntity ? ref : undefined}
