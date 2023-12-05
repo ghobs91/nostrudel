@@ -104,7 +104,7 @@ export const Note = React.memo(
                 onClick={() => singleEventService.handleEvent(event)}
               />
             )}
-            <CardHeader p="2">
+            <CardHeader p="2" className="card-header">
               <Flex flex="1" gap="2" alignItems="center">
                 <UserAvatarLink pubkey={event.pubkey} size={["xs", "sm"]} />
                 <UserLink pubkey={event.pubkey} isTruncated fontWeight="bold" fontSize="lg" />
@@ -134,10 +134,10 @@ export const Note = React.memo(
                 </Flex>
               )}
             </CardHeader>
-            <CardBody p="0">
+            <CardBody p="0" className="card-body">
               <NoteContentWithWarning event={event} />
             </CardBody>
-            <CardFooter padding="2" display="flex" gap="2" flexDirection="column" alignItems="flex-start">
+            <CardFooter className="card-footer" padding="2" display="flex" gap="2" flexDirection="column" alignItems="flex-start">
               {showReactionsOnNewLine && reactionButtons}
               <Flex gap="2" w="full" alignItems="center">
                 <ButtonGroup size="sm" variant="ghost" isDisabled={account?.readonly ?? true}>

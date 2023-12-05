@@ -16,3 +16,19 @@ body,
   box-shadow: 0 0 10px #000000bf !important;
   background-color: #242526 !important;
 }
+.card-header {
+  width: 100%;
+}
+.card-body {
+  width: 100%;
+}
+.card-footer {
+  width: 100%;
+}
+.mobile-nav-button {
+  background-color: unset !important;
+}
+.bottom-navbar {
+  background-color: unset !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+}

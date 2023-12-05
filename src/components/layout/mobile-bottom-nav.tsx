@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import useCurrentAccount from "../../hooks/use-current-account";
 import { PostModalContext } from "../../providers/post-modal-provider";
-import { DirectMessagesIcon, NotesIcon, NotificationsIcon, PlusCircleIcon, SearchIcon } from "../icons";
+import { DirectMessagesIcon, HomeIcon, NotesIcon, NotificationsIcon, PlusCircleIcon, SearchIcon } from "../icons";
 import UserAvatar from "../user-avatar";
 import MobileSideDrawer from "./mobile-side-drawer";
 
@@ -19,18 +19,19 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
 
   return (
     <>
-      <Flex {...props} gap="2" padding="2" alignItems="center">
-        {account ? (
+      <Flex {...props} gap="2" padding="2" alignItems="center" className="bottom-navbar">
+        {/* {account ? (
           <UserAvatar pubkey={account.pubkey} size="sm" onClick={onOpen} noProxy />
         ) : (
           <Avatar size="sm" src="/apple-touch-icon.png" onClick={onOpen} cursor="pointer" />
-        )}
+        )} */}
         <IconButton
-          icon={<NotesIcon boxSize={6} />}
+          icon={<HomeIcon boxSize={6} />}
           aria-label="Home"
           onClick={() => navigate("/")}
           flexGrow="1"
           size="md"
+          className="mobile-nav-button"
         />
         <IconButton
           icon={<SearchIcon boxSize={6} />}
@@ -38,6 +39,7 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
           onClick={() => navigate(`/search`)}
           flexGrow="1"
           size="md"
+          className="mobile-nav-button"
         />
         <IconButton
           icon={<PlusCircleIcon boxSize={6} />}
@@ -46,7 +48,8 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
             openModal();
           }}
           variant="solid"
-          colorScheme="primary"
+          // colorScheme="primary"
+          className="mobile-nav-button"
           isDisabled={account?.readonly ?? true}
         />
         <IconButton
@@ -55,6 +58,7 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
           onClick={() => navigate(`/dm`)}
           flexGrow="1"
           size="md"
+          className="mobile-nav-button"
         />
         <IconButton
           icon={<NotificationsIcon boxSize={6} />}
@@ -62,6 +66,7 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
           onClick={() => navigate("/notifications")}
           flexGrow="1"
           size="md"
+          className="mobile-nav-button"
         />
       </Flex>
       <MobileSideDrawer isOpen={isOpen} onClose={onClose} />

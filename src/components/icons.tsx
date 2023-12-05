@@ -17,6 +17,7 @@ import Zap from "./icons/zap";
 import Target04 from "./icons/target-04";
 import Award01 from "./icons/award-01";
 import LayoutRight from "./icons/layout-right";
+import Home from "./icons/home-01";
 import ThumbsUp from "./icons/thumbs-up";
 import ThumbsDown from "./icons/thumbs-down";
 import LogOut01 from "./icons/log-out-01";
@@ -67,6 +68,8 @@ import MessageChatSquare from "./icons/message-chat-square";
 const defaultProps: IconProps = { boxSize: 4 };
 
 export const NotesIcon = StickerSquare;
+
+export const HomeIcon = Home;
 
 export const NoteFeedIcon = DistributeSpacingVertical;
 

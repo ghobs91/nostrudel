@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { Flex, useDisclosure } from "@chakra-ui/react";
+import { Flex, useDisclosure, Avatar } from "@chakra-ui/react";
 import { Kind } from "nostr-tools";
 
 import { isReply, isRepost } from "../../helpers/nostr/events";
@@ -13,6 +13,8 @@ import PeopleListProvider, { usePeopleListContext } from "../../providers/people
 import RelaySelectionProvider, { useRelaySelectionContext } from "../../providers/relay-selection-provider";
 import useClientSideMuteFilter from "../../hooks/use-client-side-mute-filter";
 import NoteFilterTypeButtons from "../../components/note-filter-type-buttons";
+import useCurrentAccount from "../../hooks/use-current-account";
+import UserAvatar from "../../components/user-avatar";
 
 function HomePage() {
   const showReplies = useDisclosure({ defaultIsOpen: localStorage.getItem("show-replies") === "true" });
@@ -24,6 +26,8 @@ function HomePage() {
     localStorage.setItem("show-reposts", String(showReposts.isOpen));
   }, [showReplies.isOpen, showReposts.isOpen]);
 
+  const account = useCurrentAccount();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const timelinePageEventFilter = useTimelinePageEventFilter();
   const muteFilter = useClientSideMuteFilter();
   const eventFilter = useCallback(
@@ -46,11 +50,16 @@ function HomePage() {
   });
 
   const header = (
-    <Flex gap="2" wrap="wrap" alignItems="center">
+    <Flex gap="1" wrap="wrap" alignItems="center">
+              {account ? (
+          <UserAvatar pubkey={account.pubkey} size="sm" onClick={onOpen} noProxy />
+        ) : (
+          <Avatar size="sm" src="/apple-touch-icon.png" onClick={onOpen} cursor="pointer" />
+        )}
       <PeopleListSelection />
       <NoteFilterTypeButtons showReplies={showReplies} showReposts={showReposts} />
       <RelaySelectionButton ml="auto" />
-      <TimelineViewTypeButtons />
+      {/* <TimelineViewTypeButtons /> */}
     </Flex>
   );
 
