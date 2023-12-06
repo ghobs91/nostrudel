@@ -32,12 +32,12 @@ export default function UserStatsAccordion({ pubkey }: { pubkey: string }) {
   const followerCount = useEventCount({ "#p": [pubkey], kinds: [Kind.Contacts] });
 
   return (
-    <Accordion allowMultiple>
+    <Accordion defaultIndex={[0]} allowMultiple>
       <AccordionItem>
         <h2>
           <AccordionButton>
             <Box as="span" flex="1" textAlign="left">
-              Network Stats
+              User Stats
             </Box>
             <AccordionIcon />
           </AccordionButton>

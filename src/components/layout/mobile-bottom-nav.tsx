@@ -20,11 +20,11 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
   return (
     <>
       <Flex {...props} gap="2" padding="2" alignItems="center" className="bottom-navbar">
-        {/* {account ? (
+        {account ? (
           <UserAvatar pubkey={account.pubkey} size="sm" onClick={onOpen} noProxy />
         ) : (
           <Avatar size="sm" src="/apple-touch-icon.png" onClick={onOpen} cursor="pointer" />
-        )} */}
+        )}
         <IconButton
           icon={<HomeIcon boxSize={6} />}
           aria-label="Home"
@@ -49,7 +49,7 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
           }}
           variant="solid"
           // colorScheme="primary"
-          className="mobile-nav-button"
+          className="mobile-nav-button-post"
           isDisabled={account?.readonly ?? true}
         />
         <IconButton

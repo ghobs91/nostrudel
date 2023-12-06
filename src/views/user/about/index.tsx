@@ -117,6 +117,7 @@ export default function UserAboutTab() {
           position="absolute"
         />
       </Box>
+      <UserStatsAccordion pubkey={pubkey} />
       {aboutContent && (
         <Box whiteSpace="pre-wrap" px="2">
           {aboutContent}
@@ -159,7 +160,7 @@ export default function UserAboutTab() {
       </Flex>
 
       <UserProfileBadges pubkey={pubkey} px="2" />
-      <UserStatsAccordion pubkey={pubkey} />
+      
 
       <Flex gap="2" wrap="wrap">
         <Button

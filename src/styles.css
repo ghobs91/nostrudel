@@ -29,7 +29,15 @@ body,
 .mobile-nav-button {
   background-color: unset !important;
 }
+.mobile-nav-button-post {
+  background-color: unset !important;
+  margin: 0 10px 0 10px;
+}
 .bottom-navbar {
   background-color: unset !important;
   backdrop-filter: saturate(180%) blur(20px) !important;
+  border-top: 1px solid #474849;
+}
+.top-navbar {
+  margin-bottom: 5px;
 }

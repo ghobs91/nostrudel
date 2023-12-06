@@ -49,7 +49,7 @@ import { GOAL_KIND } from "../../helpers/nostr/goal";
 
 const tabs = [
   { label: "About", path: "about" },
-  { label: "Notes", path: "notes" },
+  { label: "Posts", path: "notes" },
   { label: "Articles", path: "articles" },
   { label: "Streams", path: "streams" },
   { label: "Zaps", path: "zaps" },

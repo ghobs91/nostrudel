@@ -20,6 +20,7 @@ import {
   NotesIcon,
   LightningIcon,
   ChannelsIcon,
+  HomeIcon,
 } from "../icons";
 import useCurrentAccount from "../../hooks/use-current-account";
 import accountService from "../../services/account";
@@ -72,11 +73,11 @@ export default function NavItems() {
       <Button
         as={RouterLink}
         to="/"
-        leftIcon={<NotesIcon boxSize={6} />}
+        leftIcon={<HomeIcon boxSize={6} />}
         colorScheme={active === "notes" ? "primary" : undefined}
         {...buttonProps}
       >
-        Notes
+        Home
       </Button>
       {account && (
         <>
@@ -150,7 +151,7 @@ export default function NavItems() {
       >
         Communities
       </Button>
-      <Button
+      {/* <Button
         as={RouterLink}
         to="/channels"
         leftIcon={<ChannelsIcon boxSize={6} />}
@@ -158,7 +159,7 @@ export default function NavItems() {
         {...buttonProps}
       >
         Channels
-      </Button>
+      </Button> */}
       <Button
         as={RouterLink}
         to="/lists"
@@ -168,7 +169,7 @@ export default function NavItems() {
       >
         Lists
       </Button>
-      <Button
+      {/* <Button
         as={RouterLink}
         to="/goals"
         leftIcon={<GoalIcon boxSize={6} />}
@@ -176,8 +177,8 @@ export default function NavItems() {
         {...buttonProps}
       >
         Goals
-      </Button>
-      <Button
+      </Button> */}
+      {/* <Button
         as={RouterLink}
         to="/badges"
         leftIcon={<BadgeIcon boxSize={6} />}
@@ -185,8 +186,8 @@ export default function NavItems() {
         {...buttonProps}
       >
         Badges
-      </Button>
-      <Button
+      </Button> */}
+      {/* <Button
         as={RouterLink}
         to="/emojis"
         leftIcon={<EmojiPacksIcon boxSize={6} />}
@@ -194,7 +195,7 @@ export default function NavItems() {
         {...buttonProps}
       >
         Emojis
-      </Button>
+      </Button> */}
       <Button
         as={RouterLink}
         to="/tools"
@@ -214,7 +215,7 @@ export default function NavItems() {
       >
         Settings
       </Button>
-      {(lastDonate === undefined || dayjs.unix(lastDonate).isBefore(dayjs().subtract(1, "week"))) && (
+      {/* {(lastDonate === undefined || dayjs.unix(lastDonate).isBefore(dayjs().subtract(1, "week"))) && (
         <Button
           as={Link}
           leftIcon={<LightningIcon boxSize={6} color="yellow.400" />}
@@ -236,7 +237,7 @@ export default function NavItems() {
           onClose={donateModal.onClose}
           onZapped={() => setLastDonate(dayjs().unix())}
         />
-      )}
+      )} */}
       {account && (
         <Button onClick={() => accountService.logout()} leftIcon={<LogoutIcon boxSize={6} />} {...buttonProps}>
           Logout
