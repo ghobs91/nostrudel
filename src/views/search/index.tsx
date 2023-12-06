@@ -71,6 +71,9 @@ export function SearchPage() {
   // set the search when the form is submitted
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
+    if (searchInput && searchInput?.indexOf('@twitter') !== -1) {
+      searchInput.replace('@twitter', '_at_bird.makeup@mostr.pub');
+    }
     handleSearchText(searchInput);
   };
 

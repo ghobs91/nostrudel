@@ -138,7 +138,7 @@ const UserView = () => {
   const lastMatch = matches[matches.length - 1];
 
   const activeTab = filteredTabs.indexOf(
-    filteredTabs.find((t) => lastMatch.pathname.endsWith(t.path)) ?? filteredTabs[0],
+    filteredTabs.find((t) => lastMatch.pathname.endsWith(t.path)) ?? filteredTabs[1],
   );
 
   return (

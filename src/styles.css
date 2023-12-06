@@ -15,6 +15,7 @@ body,
   border-radius: .75rem !important;
   box-shadow: 0 0 10px #000000bf !important;
   background-color: #242526 !important;
+  margin: 5px 0 5px 0;
 }
 .card-header {
   width: 100%;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Button,
   Modal,
@@ -27,7 +27,7 @@ import useUserCommunitiesList from "../../../hooks/use-user-communities-list";
 import useCurrentAccount from "../../../hooks/use-current-account";
 import { createCoordinate } from "../../../services/replaceable-event-requester";
 import relayHintService from "../../../services/event-relay-hint";
-
+import { handleEventFromRelay } from "../../../services/event-relays";
 function buildRepost(event: NostrEvent): DraftNostrEvent {
   const hint = relayHintService.getEventRelayHint(event);
   const tags: NostrEvent["tags"] = [];
@@ -53,8 +53,17 @@ export default function RepostModal({
   const showCommunities = useDisclosure();
   const { pointers } = useUserCommunitiesList(account?.pubkey);
 
+  const broadcast = useCallback(() => {
+    const missingRelays = clientRelaysService.getWriteUrls();
+    const pub = new NostrPublishAction("Broadcast", missingRelays, event, 5000);
+    pub.onResult.subscribe((result) => {
+      if (result.status) handleEventFromRelay(result.relay, event);
+    });
+  }, []);
+
   const [loading, setLoading] = useState(false);
   const repost = async (communityPointer?: AddressPointer) => {
+    broadcast();
     try {
       setLoading(true);
       const draftRepost = buildRepost(event);

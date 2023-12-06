@@ -6,7 +6,7 @@ const sizes = {
     maxW: "30em",
   }),
   md: defineStyle({
-    maxW: "48em",
+    maxW: "42em",
   }),
   lg: defineStyle({
     maxW: "62em",

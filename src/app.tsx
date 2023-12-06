@@ -197,7 +197,7 @@ const router = createHashRouter([
         path: "/u/:pubkey",
         element: <UserView />,
         children: [
-          { path: "", element: <UserAboutTab /> },
+          { path: "", element: <UserNotesTab /> },
           { path: "about", element: <UserAboutTab /> },
           { path: "notes", element: <UserNotesTab /> },
           { path: "articles", element: <UserArticlesTab /> },
