@@ -31,11 +31,11 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 2097152 * 1.5,
       },
       manifest: {
-        name: "noStrudel",
-        short_name: "noStrudel",
-        description: "A simple PWA nostr client",
+        name: "Agora",
+        short_name: "Agora",
+        description: "A place to share interests and learn new things!",
         orientation: "any",
-        theme_color: "#8DB600",
+        theme_color: "#151515",
         categories: ["nostr"],
         icons: [
           { src: "/favicon.ico", type: "image/x-icon", sizes: "16x16 32x32" },

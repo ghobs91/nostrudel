@@ -37,7 +37,14 @@ body,
   background-color: unset !important;
   backdrop-filter: saturate(180%) blur(20px) !important;
   border-top: 1px solid #474849;
+  padding-bottom: 15px !important;
 }
 .top-navbar {
   margin-bottom: 5px;
+}
+.notification-item-container {
+  margin: 10px 0 10px 0;
+  border: 1px solid #353535;
+  border-radius: 10px;
+  padding: 10px;
 }

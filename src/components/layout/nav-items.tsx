@@ -27,6 +27,7 @@ import accountService from "../../services/account";
 import { useLocalStorage } from "react-use";
 import ZapModal from "../event-zap-modal";
 import dayjs from "dayjs";
+import TrendUp01 from "../icons/trend-up-01";
 
 export default function NavItems() {
   const location = useLocation();
@@ -90,7 +91,7 @@ export default function NavItems() {
           >
             Notifications
           </Button>
-          <Button
+          {/* <Button
             as={RouterLink}
             to={"/dm"}
             leftIcon={<DirectMessagesIcon boxSize={6} />}
@@ -98,9 +99,18 @@ export default function NavItems() {
             {...buttonProps}
           >
             Messages
-          </Button>
+          </Button> */}
         </>
       )}
+      <Button
+        as={RouterLink}
+        to="/discover"
+        leftIcon={<TrendUp01 boxSize={6} />}
+        colorScheme={active === "channels" ? "primary" : undefined}
+        {...buttonProps}
+      >
+        Discover
+      </Button>
       <Button
         as={RouterLink}
         to="/search"
@@ -130,10 +140,10 @@ export default function NavItems() {
       >
         Relays
       </Button>
-      <Text position="relative" py="2" color="GrayText">
+      {/* <Text position="relative" py="2" color="GrayText">
         Other Stuff
-      </Text>
-      <Button
+      </Text> */}
+      {/* <Button
         as={RouterLink}
         to="/streams"
         leftIcon={<LiveStreamIcon boxSize={6} />}
@@ -141,7 +151,7 @@ export default function NavItems() {
         {...buttonProps}
       >
         Streams
-      </Button>
+      </Button> */}
       <Button
         as={RouterLink}
         to="/communities"
@@ -196,7 +206,7 @@ export default function NavItems() {
       >
         Emojis
       </Button> */}
-      <Button
+      {/* <Button
         as={RouterLink}
         to="/tools"
         leftIcon={<ToolsIcon boxSize={6} />}
@@ -204,7 +214,7 @@ export default function NavItems() {
         {...buttonProps}
       >
         Tools
-      </Button>
+      </Button> */}
       <Box h="4" />
       <Button
         as={RouterLink}

@@ -45,7 +45,7 @@ function NotificationDay({ day, events }: { day: number; events: NostrEvent[] })
         <Divider />
         <ExpandableToggleButton toggle={expanded} aria-label="Toggle day" title="Toggle day" />
       </Flex>
-      {expanded.isOpen && events.map((event) => <NotificationItem key={event.id} event={event} />)}
+      {expanded.isOpen && events.map((event) => <div className="notification-item-container"><NotificationItem key={event.id} event={event} /></div>)}
     </>
   );
 }
@@ -113,7 +113,6 @@ function NotificationsPage() {
           />
           <PeopleListSelection flexShrink={0} />
         </Flex>
-
         {sortedDays.map(([day, events]) => (
           <NotificationDay key={day} day={day} events={events} />
         ))}

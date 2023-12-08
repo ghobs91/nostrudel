@@ -39,7 +39,7 @@ export default function MobileSideDrawer({ ...props }: Omit<DrawerProps, "childr
           ) : (
             <Flex gap="2" my="2" alignItems="center">
               <Avatar src="/apple-touch-icon.png" size="md" />
-              <Text m={0}>Nostrudel</Text>
+              <Text m={0}>Agora</Text>
             </Flex>
           )}
           <NavItems />

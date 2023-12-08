@@ -3,7 +3,7 @@ import useCurrentAccount from "./use-current-account";
 import { getCoordinatesFromList } from "../helpers/nostr/lists";
 import useReplaceableEvents from "./use-replaceable-events";
 
-export const FAVORITE_LISTS_IDENTIFIER = "nostrudel-favorite-lists";
+export const FAVORITE_LISTS_IDENTIFIER = "agora-favorite-lists";
 
 export default function useFavoriteLists() {
   const account = useCurrentAccount();
