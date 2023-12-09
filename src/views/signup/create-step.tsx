@@ -62,8 +62,8 @@ export default function CreateStep({
 
       // login
       const pubkey = getPublicKey(hex);
-      const encrypted = await signingService.encryptSecKey(hex);
-      accountService.addAccount({ pubkey, relays, ...encrypted, readonly: false });
+      // const encrypted = await signingService.encryptSecKey(hex);
+      accountService.addAccount({ pubkey, relays, readonly: false });
       accountService.switchAccount(pubkey);
 
       // set relays
