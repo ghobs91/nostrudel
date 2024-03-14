@@ -3,9 +3,8 @@ import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import useCurrentAccount from "../../hooks/use-current-account";
-import { PostModalContext } from "../../providers/post-modal-provider";
+import { PostModalContext } from "../../providers/route/post-modal-provider";
 import { DirectMessagesIcon, HomeIcon, NotesIcon, NotificationsIcon, PlusCircleIcon, SearchIcon } from "../icons";
-import UserAvatar from "../user-avatar";
 import MobileSideDrawer from "./mobile-side-drawer";
 import Rocket02 from "../icons/rocket-02";
 
@@ -21,11 +20,7 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
   return (
     <>
       <Flex {...props} gap="2" padding="2" alignItems="center" className="bottom-navbar">
-        {account ? (
-          <UserAvatar pubkey={account.pubkey} size="sm" onClick={onOpen} noProxy />
-        ) : (
-          <Avatar size="sm" src="/apple-touch-icon.png" onClick={onOpen} cursor="pointer" />
-        )}
+        <Avatar size="sm" src="/apple-touch-icon.png" onClick={onOpen} cursor="pointer" />
         <IconButton
           icon={<HomeIcon boxSize={6} />}
           aria-label="Home"
