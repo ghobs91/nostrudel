@@ -1,21 +1,17 @@
 import { Box, Button, ButtonProps, Link, Text, useDisclosure } from "@chakra-ui/react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { nip19 } from "nostr-tools";
+import dayjs from "dayjs";
 
 import {
-  BadgeIcon,
   DirectMessagesIcon,
   CommunityIcon,
-  EmojiPacksIcon,
-  GoalIcon,
-  ListsIcon,
   LiveStreamIcon,
   NotificationsIcon,
   ProfileIcon,
   RelayIcon,
   SearchIcon,
   SettingsIcon,
-  ToolsIcon,
   LogoutIcon,
   NotesIcon,
   LightningIcon,
@@ -26,7 +22,12 @@ import useCurrentAccount from "../../hooks/use-current-account";
 import accountService from "../../services/account";
 import { useLocalStorage } from "react-use";
 import ZapModal from "../event-zap-modal";
-import dayjs from "dayjs";
+import PuzzlePiece01 from "../icons/puzzle-piece-01";
+import Package from "../icons/package";
+import Rocket02 from "../icons/rocket-02";
+import { useBreakpointValue } from "../../providers/global/breakpoint-provider";
+import KeyboardShortcut from "../keyboard-shortcut";
+import Mail02 from "../icons/mail-02";
 import TrendUp01 from "../icons/trend-up-01";
 
 export default function NavItems() {
@@ -36,6 +37,8 @@ export default function NavItems() {
   const donateModal = useDisclosure();
   const [lastDonate, setLastDonate] = useLocalStorage<number>("last-donate");
 
+  const showShortcuts = useBreakpointValue({ base: false, md: true });
+
   const buttonProps: ButtonProps = {
     py: "2",
     justifyContent: "flex-start",
@@ -44,9 +47,12 @@ export default function NavItems() {
 
   let active = "notes";
   if (location.pathname.startsWith("/notifications")) active = "notifications";
+  else if (location.pathname.startsWith("/launchpad")) active = "launchpad";
+  else if (location.pathname.startsWith("/dvm")) active = "dvm";
   else if (location.pathname.startsWith("/dm")) active = "dm";
   else if (location.pathname.startsWith("/streams")) active = "streams";
   else if (location.pathname.startsWith("/relays")) active = "relays";
+  else if (location.pathname.startsWith("/r/")) active = "relays";
   else if (location.pathname.startsWith("/lists")) active = "lists";
   else if (location.pathname.startsWith("/communities")) active = "communities";
   else if (location.pathname.startsWith("/channels")) active = "channels";
@@ -57,10 +63,12 @@ export default function NavItems() {
   else if (location.pathname.startsWith("/settings")) active = "settings";
   else if (location.pathname.startsWith("/tools")) active = "tools";
   else if (location.pathname.startsWith("/search")) active = "search";
+  else if (location.pathname.startsWith("/tracks")) active = "tracks";
   else if (location.pathname.startsWith("/t/")) active = "search";
   else if (location.pathname.startsWith("/torrents")) active = "tools";
   else if (location.pathname.startsWith("/map")) active = "tools";
   else if (location.pathname.startsWith("/profile")) active = "profile";
+  else if (location.pathname.startsWith("/other-stuff")) active = "other-stuff";
   else if (
     account &&
     (location.pathname.startsWith("/u/" + nip19.npubEncode(account.pubkey)) ||
@@ -73,12 +81,40 @@ export default function NavItems() {
     <>
       <Button
         as={RouterLink}
+        to="/launchpad"
+        leftIcon={<Rocket02 boxSize={6} />}
+        colorScheme={active === "launchpad" ? "primary" : undefined}
+        {...buttonProps}
+      >
+        Launchpad
+        {showShortcuts && <KeyboardShortcut letter="l" requireMeta ml="auto" />}
+      </Button>
+      <Button
+        as={RouterLink}
         to="/"
         leftIcon={<HomeIcon boxSize={6} />}
         colorScheme={active === "notes" ? "primary" : undefined}
         {...buttonProps}
       >
         Home
+      </Button>
+      <Button
+        as={RouterLink}
+        to="/dvm"
+        leftIcon={<PuzzlePiece01 boxSize={6} />}
+        colorScheme={active === "dvm" ? "primary" : undefined}
+        {...buttonProps}
+      >
+        Discover
+      </Button>
+      <Button
+        as={RouterLink}
+        to="/dvm"
+        leftIcon={<PuzzlePiece01 boxSize={6} />}
+        colorScheme={active === "dvm" ? "primary" : undefined}
+        {...buttonProps}
+      >
+        Discover
       </Button>
       {account && (
         <>
@@ -90,6 +126,7 @@ export default function NavItems() {
             {...buttonProps}
           >
             Notifications
+            {showShortcuts && <KeyboardShortcut letter="i" requireMeta ml="auto" />}
           </Button>
           {/* <Button
             as={RouterLink}
@@ -119,6 +156,7 @@ export default function NavItems() {
         {...buttonProps}
       >
         Search
+        {showShortcuts && <KeyboardShortcut letter="k" requireMeta ml="auto" />}
       </Button>
       {account?.pubkey && (
         <Button
@@ -172,9 +210,9 @@ export default function NavItems() {
       </Button> */}
       <Button
         as={RouterLink}
-        to="/lists"
-        leftIcon={<ListsIcon boxSize={6} />}
-        colorScheme={active === "lists" ? "primary" : undefined}
+        to="/other-stuff"
+        leftIcon={<Package boxSize={6} />}
+        colorScheme={active === "other-stuff" ? "primary" : undefined}
         {...buttonProps}
       >
         Lists

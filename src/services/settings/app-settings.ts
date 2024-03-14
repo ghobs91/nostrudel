@@ -2,10 +2,8 @@ import { PersistentSubject } from "../../classes/subject";
 import accountService from "../account";
 import userAppSettings from "./user-app-settings";
 import clientRelaysService from "../client-relays";
-import signingService from "../signing";
-import { AppSettings, defaultSettings } from "./migrations";
+import { defaultSettings } from "./migrations";
 import { logger } from "../../helpers/debug";
-import NostrPublishAction from "../../classes/nostr-publish-action";
 
 const log = logger.extend("AppSettings");
 
@@ -14,21 +12,7 @@ appSettings.subscribe((event) => {
   log(`Changed`, event);
 });
 
-export async function replaceSettings(newSettings: AppSettings) {
-  const account = accountService.current.value;
-  if (!account) return;
-
-  if (account.readonly) {
-    accountService.updateAccountLocalSettings(account.pubkey, newSettings);
-    appSettings.next(newSettings);
-  } else {
-    const draft = userAppSettings.buildAppSettingsEvent(newSettings);
-    const signed = await signingService.requestSignature(draft, account);
-    userAppSettings.receiveEvent(signed);
-    const pub = new NostrPublishAction("Update Settings", clientRelaysService.getWriteUrls(), signed);
-  }
-}
-
+let accountSub: ZenObservable.Subscription;
 accountService.current.subscribe(() => {
   const account = accountService.current.value;
 
@@ -37,27 +21,27 @@ accountService.current.subscribe(() => {
     return;
   }
 
-  appSettings.disconnectAll();
+  if (accountSub) accountSub.unsubscribe();
 
   if (account.localSettings) {
     appSettings.next(account.localSettings);
     log("Loaded user settings from local storage");
   }
 
-  const subject = userAppSettings.requestAppSettings(account.pubkey, clientRelaysService.getReadUrls(), {
+  const subject = userAppSettings.requestAppSettings(account.pubkey, clientRelaysService.readRelays.value, {
     alwaysRequest: true,
   });
-  appSettings.next(defaultSettings);
-  appSettings.connect(subject);
+  appSettings.next(subject.value || defaultSettings);
+  accountSub = subject.subscribe((s) => appSettings.next(s));
 });
 
-clientRelaysService.relays.subscribe(() => {
-  // relays changed, look for settings again
-  const account = accountService.current.value;
+// clientRelaysService.relays.subscribe(() => {
+//   // relays changed, look for settings again
+//   const account = accountService.current.value;
 
-  if (account) {
-    userAppSettings.requestAppSettings(account.pubkey, clientRelaysService.getReadUrls(), { alwaysRequest: true });
-  }
-});
+//   if (account) {
+//     userAppSettings.requestAppSettings(account.pubkey, clientRelaysService.getInboxURLs(), { alwaysRequest: true });
+//   }
+// });
 
 export default appSettings;

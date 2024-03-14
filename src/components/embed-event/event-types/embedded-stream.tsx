@@ -4,11 +4,11 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { parseStreamEvent } from "../../../helpers/nostr/stream";
 import { NostrEvent } from "../../../types/nostr-event";
 import StreamStatusBadge from "../../../views/streams/components/status-badge";
-import UserLink from "../../user-link";
-import UserAvatar from "../../user-avatar";
+import UserLink from "../../user/user-link";
+import UserAvatar from "../../user/user-avatar";
 import useEventNaddr from "../../../hooks/use-event-naddr";
 import Timestamp from "../../timestamp";
-import { useBreakpointValue } from "../../../providers/breakpoint-provider";
+import { useBreakpointValue } from "../../../providers/global/breakpoint-provider";
 
 export default function EmbeddedStream({ event, ...props }: Omit<CardProps, "children"> & { event: NostrEvent }) {
   const stream = parseStreamEvent(event);

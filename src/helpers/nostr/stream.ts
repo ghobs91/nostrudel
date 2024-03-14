@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { DraftNostrEvent, NostrEvent, isPTag } from "../../types/nostr-event";
 import { unique } from "../array";
 import { ensureNotifyContentMentions } from "./post";
-import { createCoordinate } from "../../services/replaceable-event-requester";
+import { getEventCoordinate } from "./event";
 
 export const STREAM_KIND = 30311;
 export const STREAM_CHAT_MESSAGE_KIND = 1311;
@@ -41,7 +41,7 @@ export function parseStreamEvent(stream: NostrEvent): ParsedStream {
   const goal = stream.tags.find((t) => t[0] === "goal")?.[1];
   const identifier = stream.tags.find((t) => t[0] === "d")?.[1];
 
-  if (!identifier) throw new Error("missing identifier");
+  if (!identifier) throw new Error("Missing Identifier");
 
   let relays = stream.tags.find((t) => t[0] === "relays");
   // remove the first "relays" element
@@ -87,7 +87,7 @@ export function parseStreamEvent(stream: NostrEvent): ParsedStream {
 }
 
 export function getATag(stream: ParsedStream) {
-  return createCoordinate(stream.event.kind, stream.author, stream.identifier);
+  return getEventCoordinate(stream.event);
 }
 
 export function buildChatMessage(stream: ParsedStream, content: string) {

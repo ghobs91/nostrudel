@@ -1,18 +1,17 @@
 import dayjs from "dayjs";
 import debug, { Debugger } from "debug";
 import _throttle from "lodash/throttle";
-import { Kind } from "nostr-tools";
+import { kinds } from "nostr-tools";
 
 import NostrSubscription from "../classes/nostr-subscription";
 import SuperMap from "../classes/super-map";
 import { NostrEvent } from "../types/nostr-event";
 import Subject from "../classes/subject";
-import { NostrQuery } from "../types/nostr-query";
+import { NostrQuery } from "../types/nostr-relay";
 import { logger } from "../helpers/debug";
 import db from "./db";
 import createDefer, { Deferred } from "../classes/deferred";
 import { getChannelPointer } from "../helpers/nostr/channel";
-import localCacheRelayService, { LOCAL_CACHE_RELAY } from "./local-cache-relay";
 
 type Pubkey = string;
 type Relay = string;
@@ -31,7 +30,7 @@ const RELAY_REQUEST_BATCH_TIME = 1000;
 /** This class is ued to batch requests to a single relay */
 class ChannelMetadataRelayLoader {
   private subscription: NostrSubscription;
-  private events = new SuperMap<Pubkey, Subject<NostrEvent>>(() => new Subject<NostrEvent>());
+  private events = new SuperMap<string, Subject<NostrEvent>>(() => new Subject<NostrEvent>());
 
   private requestNext = new Set<string>();
   private requested = new Map<string, Date>();
@@ -105,12 +104,12 @@ class ChannelMetadataRelayLoader {
     if (needsUpdate) {
       if (this.requested.size > 0) {
         const query: NostrQuery = {
-          kinds: [Kind.ChannelMetadata],
+          kinds: [kinds.ChannelMetadata],
           "#e": Array.from(this.requested.keys()),
         };
 
         if (query["#e"] && query["#e"].length > 0) this.log(`Updating query`, query["#e"].length);
-        this.subscription.setQuery(query);
+        this.subscription.setFilters([query]);
 
         if (this.subscription.state !== NostrSubscription.OPEN) {
           this.subscription.open();
@@ -214,6 +213,7 @@ class ChannelMetadataService {
   async pruneDatabaseCache() {
     const keys = await db.getAllKeysFromIndex(
       "channelMetadata",
+      // @ts-ignore
       "created",
       IDBKeyRange.upperBound(dayjs().subtract(1, "week").unix()),
     );
@@ -227,17 +227,14 @@ class ChannelMetadataService {
     await transaction.commit();
   }
 
-  private requestChannelMetadataFromRelays(relays: string[], channelId: string) {
+  private requestChannelMetadataFromRelays(relays: Iterable<string>, channelId: string) {
     const sub = this.metadata.get(channelId);
 
     const relayUrls = Array.from(relays);
-    if (localCacheRelayService.enabled) {
-      relayUrls.unshift(LOCAL_CACHE_RELAY);
-    }
     for (const relay of relayUrls) {
       const request = this.loaders.get(relay).requestMetadata(channelId);
 
-      sub.connectWithHandler(request, (event, next, current) => {
+      sub.connectWithMapper(request, (event, next, current) => {
         if (!current || event.created_at > current.created_at) {
           next(event);
           this.saveToCache(channelId, event);
@@ -248,7 +245,7 @@ class ChannelMetadataService {
     return sub;
   }
 
-  requestMetadata(relays: string[], channelId: string, opts: RequestOptions = {}) {
+  requestMetadata(relays: Iterable<string>, channelId: string, opts: RequestOptions = {}) {
     const sub = this.metadata.get(channelId);
 
     if (!sub.value) {

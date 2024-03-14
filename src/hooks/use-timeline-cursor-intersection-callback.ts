@@ -1,13 +1,13 @@
 import { useInterval } from "react-use";
 import TimelineLoader from "../classes/timeline-loader";
-import { useIntersectionMapCallback } from "../providers/intersection-observer";
+import { useIntersectionMapCallback } from "../providers/local/intersection-observer";
 import { NostrEvent } from "../types/nostr-event";
 
 export function useTimelineCurserIntersectionCallback(timeline: TimelineLoader) {
   // if the cursor is set too far ahead and the last block did not overlap with the cursor
   // we need to keep loading blocks until the timeline is complete or the blocks pass the cursor
   useInterval(() => {
-    timeline.triggerBlockLoads();
+    timeline.triggerChunkLoad();
   }, 1000);
 
   return useIntersectionMapCallback(
@@ -25,7 +25,7 @@ export function useTimelineCurserIntersectionCallback(timeline: TimelineLoader) 
 
       if (oldestEvent) {
         timeline.setCursor(oldestEvent.created_at);
-        timeline.triggerBlockLoads();
+        timeline.triggerChunkLoad();
       }
     },
     [timeline],

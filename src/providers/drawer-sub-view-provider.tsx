@@ -26,10 +26,10 @@ import {
 import { Location, RouteObject, RouterProvider, To, createMemoryRouter, useNavigate } from "react-router-dom";
 
 import { ErrorBoundary } from "../components/error-boundary";
-import ThreadView from "../views/note";
+import ThreadView from "../views/thread";
 import { ChevronLeftIcon, ChevronRightIcon, ExternalLinkIcon } from "../components/icons";
-import { PageProviders } from ".";
 import { logger } from "../helpers/debug";
+import { RouteProviders } from "./route";
 
 const TorrentDetailsView = lazy(() => import("../views/torrents/torrent"));
 
@@ -68,17 +68,15 @@ function DrawerSubView({
         <DrawerBody px="2" pb="2" pt="0">
           <ErrorBoundary>
             <IsInDrawerContext.Provider value={true}>
-              <PageProviders>
-                <Suspense
-                  fallback={
-                    <Heading size="md" mx="auto" my="4">
-                      <Spinner /> Loading page
-                    </Heading>
-                  }
-                >
-                  <RouterProvider router={router} />
-                </Suspense>
-              </PageProviders>
+              <Suspense
+                fallback={
+                  <Heading size="md" mx="auto" my="4">
+                    <Spinner /> Loading page
+                  </Heading>
+                }
+              >
+                <RouterProvider router={router} />
+              </Suspense>
             </IsInDrawerContext.Provider>
           </ErrorBoundary>
         </DrawerBody>
@@ -90,11 +88,19 @@ function DrawerSubView({
 const routes: RouteObject[] = [
   {
     path: "/n/:id",
-    element: <ThreadView />,
+    element: (
+      <RouteProviders>
+        <ThreadView />
+      </RouteProviders>
+    ),
   },
   {
     path: "/torrents/:id",
-    element: <TorrentDetailsView />,
+    element: (
+      <RouteProviders>
+        <TorrentDetailsView />
+      </RouteProviders>
+    ),
   },
 ];
 
@@ -112,6 +118,22 @@ export function useNavigateInDrawer() {
 
 const log = logger.extend("DrawerRouter");
 
+export function useRouterMarker(router: Router) {
+  const index = useRef<number | null>(null);
+  const set = useCallback((v = 0) => (index.current = v), []);
+  const reset = useCallback(() => (index.current = null), []);
+
+  useEffect(() => {
+    return router.subscribe((event) => {
+      if (index.current === null) return;
+      if (event.historyAction === "PUSH") index.current++;
+      else if (event.historyAction === "POP") index.current--;
+    });
+  }, [router]);
+
+  return useMemo(() => ({ index, set, reset }), [index, set, reset]);
+}
+
 export default function DrawerSubViewProvider({
   children,
   parentRouter,
@@ -121,15 +143,12 @@ export default function DrawerSubViewProvider({
   const openInParent = useCallback((to: To) => parentRouter.navigate(to), [parentRouter]);
 
   const direction = useRef<"up" | "down">();
-  const marker = useRef<number>(0);
+  const marker = useRouterMarker(parentRouter);
 
   useEffect(() => {
     return parentRouter.subscribe((event) => {
       const location = event.location as Location<{ subRouterPath?: To | null } | null>;
       const subRoute = location.state?.subRouterPath;
-
-      if (event.historyAction === "PUSH") marker.current++;
-      else if (event.historyAction === "POP") marker.current--;
 
       if (subRoute) {
         if (router) {
@@ -175,7 +194,7 @@ export default function DrawerSubViewProvider({
 
   const openDrawer = useCallback(
     (to: To) => {
-      marker.current = 0;
+      marker.set();
       parentRouter.navigate(parentRouter.state.location, {
         preventScrollReset: true,
         state: { ...parentRouter.state.location.state, subRouterPath: to },
@@ -185,8 +204,8 @@ export default function DrawerSubViewProvider({
   );
 
   const closeDrawer = useCallback(() => {
-    const i = marker.current;
-    if (i > 0) {
+    const i = marker.index.current;
+    if (i !== null && i > 0) {
       log(`Navigating back ${i} entries to the point the drawer was opened`);
       parentRouter.navigate(-i);
     } else {
@@ -198,7 +217,7 @@ export default function DrawerSubViewProvider({
     }
 
     // reset marker
-    marker.current = 0;
+    marker.reset();
   }, [parentRouter]);
 
   const context = useMemo(

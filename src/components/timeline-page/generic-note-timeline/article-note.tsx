@@ -3,8 +3,8 @@ import { Box } from "@chakra-ui/react";
 
 import { NostrEvent } from "../../../types/nostr-event";
 import EmbeddedArticle from "../../embed-event/event-types/embedded-article";
-import { useRegisterIntersectionEntity } from "../../../providers/intersection-observer";
-import { getEventUID } from "../../../helpers/nostr/events";
+import { useRegisterIntersectionEntity } from "../../../providers/local/intersection-observer";
+import { getEventUID } from "../../../helpers/nostr/event";
 
 function ArticleNote({ article }: { article: NostrEvent }) {
   const ref = useRef<HTMLDivElement | null>(null);

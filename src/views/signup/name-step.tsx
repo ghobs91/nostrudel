@@ -2,7 +2,7 @@ import { Button, Flex, Heading, Input, Text, Textarea } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import { Kind0ParsedContent } from "../../helpers/user-metadata";
+import { Kind0ParsedContent } from "../../helpers/nostr/user-metadata";
 import { AppIcon, containerProps } from "./common";
 
 export default function NameStep({ onSubmit }: { onSubmit: (metadata: Kind0ParsedContent) => void }) {
@@ -20,7 +20,7 @@ export default function NameStep({ onSubmit }: { onSubmit: (metadata: Kind0Parse
 
     onSubmit({
       name: username,
-      display_name: displayName,
+      displayName: displayName,
       about: values.about,
     });
   });
@@ -38,7 +38,7 @@ export default function NameStep({ onSubmit }: { onSubmit: (metadata: Kind0Parse
         Next
       </Button>
       <Text fontWeight="bold">Already have an account?</Text>
-      <Button as={RouterLink} to="/signin" state={location.state}>
+      <Button as={RouterLink} to="/signin" state={location.state} variant="outline" w="xs" colorScheme="primary">
         Sign in
       </Button>
     </Flex>

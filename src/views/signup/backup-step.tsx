@@ -15,6 +15,7 @@ import { containerProps } from "./common";
 import { CopyIconButton } from "../../components/copy-icon-button";
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { hexToBytes } from "@noble/hashes/utils";
 
 const Blockquote = styled.figure`
   padding: var(--chakra-sizes-2) var(--chakra-sizes-4);
@@ -48,7 +49,7 @@ const Blockquote = styled.figure`
 `;
 
 export default function BackupStep({ secretKey, onConfirm }: { secretKey: string; onConfirm: () => void }) {
-  const nsec = nip19.nsecEncode(secretKey);
+  const nsec = nip19.nsecEncode(hexToBytes(secretKey));
 
   const [confirmed, setConfirmed] = useState(false);
   const [last4, setLast4] = useState("");
@@ -97,7 +98,7 @@ export default function BackupStep({ secretKey, onConfirm }: { secretKey: string
         <FormLabel>Secret Key</FormLabel>
         <Flex gap="2">
           <Input value={nsec} />
-          <CopyIconButton aria-label="Copy nsec" title="Copy nsec" text={nsec} />
+          <CopyIconButton aria-label="Copy nsec" title="Copy nsec" value={nsec} />
         </Flex>
         <FormHelperText>This is the key to access your account, keep it secret.</FormHelperText>
       </FormControl>

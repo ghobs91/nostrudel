@@ -1,23 +1,25 @@
 import { useRef } from "react";
 import { Flex, Text } from "@chakra-ui/react";
-import { Kind } from "nostr-tools";
+import { kinds } from "nostr-tools";
 import { useOutletContext } from "react-router-dom";
 
 import useTimelineLoader from "../../hooks/use-timeline-loader";
-import { useAdditionalRelayContext } from "../../providers/additional-relay-context";
+import { useAdditionalRelayContext } from "../../providers/local/additional-relay-context";
 import useSubject from "../../hooks/use-subject";
 import { useTimelineCurserIntersectionCallback } from "../../hooks/use-timeline-cursor-intersection-callback";
-import IntersectionObserverProvider, { useRegisterIntersectionEntity } from "../../providers/intersection-observer";
+import IntersectionObserverProvider, {
+  useRegisterIntersectionEntity,
+} from "../../providers/local/intersection-observer";
 import VerticalPageLayout from "../../components/vertical-page-layout";
 import TimelineActionAndStatus from "../../components/timeline-page/timeline-action-and-status";
 import { NostrEvent, isPTag } from "../../types/nostr-event";
-import UserAvatarLink from "../../components/user-avatar-link";
-import UserLink from "../../components/user-link";
+import UserAvatarLink from "../../components/user/user-avatar-link";
+import UserLink from "../../components/user/user-link";
 import ArrowRight from "../../components/icons/arrow-right";
 import { AtIcon } from "../../components/icons";
 import Timestamp from "../../components/timestamp";
 import ArrowLeft from "../../components/icons/arrow-left";
-import { getEventUID } from "../../helpers/nostr/events";
+import { getEventUID } from "../../helpers/nostr/event";
 
 function DirectMessage({ dm, pubkey }: { dm: NostrEvent; pubkey: string }) {
   const sender = dm.pubkey;
@@ -67,9 +69,9 @@ export default function UserDMsTab() {
   const timeline = useTimelineLoader(pubkey + "-articles", readRelays, [
     {
       authors: [pubkey],
-      kinds: [Kind.EncryptedDirectMessage],
+      kinds: [kinds.EncryptedDirectMessage],
     },
-    { "#p": [pubkey], kinds: [Kind.EncryptedDirectMessage] },
+    { "#p": [pubkey], kinds: [kinds.EncryptedDirectMessage] },
   ]);
 
   const dms = useSubject(timeline.timeline);

@@ -1,6 +1,6 @@
 import Relay from "../classes/relay";
 import { PersistentSubject } from "../classes/subject";
-import { getEventUID } from "../helpers/nostr/events";
+import { getEventUID } from "../helpers/nostr/event";
 import { NostrEvent } from "../types/nostr-event";
 import relayPoolService from "./relay-pool";
 
@@ -31,7 +31,19 @@ export function handleEventFromRelay(relay: Relay, event: NostrEvent) {
 }
 
 relayPoolService.onRelayCreated.subscribe((relay) => {
-  relay.onEvent.subscribe(({ body: event }) => {
-    handleEventFromRelay(relay, event);
+  relay.onEvent.subscribe((message) => {
+    handleEventFromRelay(relay, message[2]);
   });
 });
+
+const eventRelaysService = {
+  getEventRelays,
+  handleEventFromRelay,
+};
+
+if (import.meta.env.DEV) {
+  //@ts-ignore
+  window.eventRelaysService = eventRelaysService;
+}
+
+export default eventRelaysService;

@@ -13,15 +13,15 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { Kind } from "nostr-tools";
+import { kinds } from "nostr-tools";
 
-import UserAvatarLink from "../../../components/user-avatar-link";
-import UserLink from "../../../components/user-link";
+import UserAvatarLink from "../../../components/user/user-avatar-link";
+import UserLink from "../../../components/user/user-link";
 import {
-  getEventsFromList,
+  getEventPointersFromList,
   getListDescription,
   getListName,
-  getParsedCordsFromList,
+  getAddressPointersFromList,
   getPubkeysFromList,
   getReferencesFromList,
   isSpecialListKind,
@@ -29,10 +29,9 @@ import {
 import { getSharableEventAddress } from "../../../helpers/nip19";
 import { NostrEvent } from "../../../types/nostr-event";
 import useReplaceableEvent from "../../../hooks/use-replaceable-event";
-import { createCoordinate } from "../../../services/replaceable-event-requester";
-import { useRegisterIntersectionEntity } from "../../../providers/intersection-observer";
+import { useRegisterIntersectionEntity } from "../../../providers/local/intersection-observer";
 import ListFavoriteButton from "./list-favorite-button";
-import { getEventUID } from "../../../helpers/nostr/events";
+import { getEventUID } from "../../../helpers/nostr/event";
 import ListMenu from "./list-menu";
 import { COMMUNITY_DEFINITION_KIND } from "../../../helpers/nostr/communities";
 import { CommunityIcon, NotesIcon } from "../../../components/icons";
@@ -42,13 +41,14 @@ import NoteZapButton from "../../../components/note/note-zap-button";
 import Link01 from "../../../components/icons/link-01";
 import File02 from "../../../components/icons/file-02";
 import SimpleLikeButton from "../../../components/event-reactions/simple-like-button";
+import { createCoordinate } from "../../../classes/batch-kind-loader";
 
 export function ListCardContent({ list, ...props }: Omit<CardProps, "children"> & { list: NostrEvent }) {
   const people = getPubkeysFromList(list);
-  const notes = getEventsFromList(list);
-  const coordinates = getParsedCordsFromList(list);
+  const notes = getEventPointersFromList(list);
+  const coordinates = getAddressPointersFromList(list);
   const communities = coordinates.filter((cord) => cord.kind === COMMUNITY_DEFINITION_KIND);
-  const articles = coordinates.filter((cord) => cord.kind === Kind.Article);
+  const articles = coordinates.filter((cord) => cord.kind === kinds.LongFormArticle);
   const references = getReferencesFromList(list);
 
   return (

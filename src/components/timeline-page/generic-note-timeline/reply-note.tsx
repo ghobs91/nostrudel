@@ -1,17 +1,17 @@
 import { memo, useRef } from "react";
 
 import { NostrEvent } from "../../../types/nostr-event";
-import { useRegisterIntersectionEntity } from "../../../providers/intersection-observer";
-import Note from "../../note";
+import { useRegisterIntersectionEntity } from "../../../providers/local/intersection-observer";
+import TimelineNote from "../../note/timeline-note";
+import { getEventUID } from "nostr-idb";
 
 function ReplyNote({ event }: { event: NostrEvent }) {
-  // if there is a parent intersection observer, register this card
   const ref = useRef<HTMLDivElement | null>(null);
-  useRegisterIntersectionEntity(ref, event.id);
+  useRegisterIntersectionEntity(ref, getEventUID(event));
 
   return (
     <div ref={ref}>
-      <Note event={event} showReplyButton showReplyLine />
+      <TimelineNote event={event} showReplyButton showReplyLine />
     </div>
   );
 }

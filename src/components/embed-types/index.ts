@@ -8,3 +8,7 @@ export * from "./emoji";
 export * from "./image";
 export * from "./cashu";
 export * from "./video";
+export * from "./simplex";
+export * from "./reddit";
+export * from "./model";
+export * from "./audio";

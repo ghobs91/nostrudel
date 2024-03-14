@@ -18,14 +18,15 @@ import {
 import NostrPublishAction from "../classes/nostr-publish-action";
 import useSubject from "../hooks/use-subject";
 import { CheckIcon, ErrorIcon } from "./icons";
-import { publishLog } from "../services/publish-log";
 import { PublishDetails } from "./publish-details";
+import { useContext } from "react";
+import { PublishContext } from "../providers/global/publish-provider";
 
 export function PublishActionStatusTag({ pub, ...props }: { pub: NostrPublishAction } & Omit<TagProps, "children">) {
   const results = useSubject(pub.results);
 
-  const successful = results.filter((result) => result.status);
-  const failedWithMessage = results.filter((result) => !result.status && result.message);
+  const successful = results.filter(({ result }) => result[2]);
+  const failedWithMessage = results.filter(({ result }) => !result[2] && result[3]);
 
   let statusIcon = <Spinner size="xs" />;
   let statusColor: TagProps["colorScheme"] = "blue";
@@ -81,12 +82,13 @@ function PublishAction({ pub }: { pub: NostrPublishAction }) {
 }
 
 export default function PublishLog({ ...props }: Omit<FlexProps, "children">) {
-  const log = Array.from(useSubject(publishLog)).reverse();
+  const { log } = useContext(PublishContext);
+  const reverseLog = Array.from(log).reverse();
 
   return (
     <Flex overflow="hidden" direction="column" gap="1" {...props}>
-      {log.length > 0 && <Text>Activity log:</Text>}
-      {log.map((pub) => (
+      {reverseLog.length > 0 && <Text>Activity log:</Text>}
+      {reverseLog.map((pub) => (
         <PublishAction key={pub.id} pub={pub} />
       ))}
     </Flex>

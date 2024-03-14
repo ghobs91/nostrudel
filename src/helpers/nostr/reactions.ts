@@ -1,7 +1,7 @@
-import { Kind } from "nostr-tools";
+import { kinds } from "nostr-tools";
 import { DraftNostrEvent, NostrEvent, Tag } from "../../types/nostr-event";
 import dayjs from "dayjs";
-import { getEventCoordinate, isReplaceable } from "./events";
+import { getEventCoordinate, isReplaceable } from "./event";
 
 export type ReactionGroup = { emoji: string; url?: string; name?: string; count: number; pubkeys: string[] };
 
@@ -26,9 +26,13 @@ export function draftEventReaction(event: NostrEvent, emoji = "+", url?: string)
     ["e", event.id],
     ["p", event.pubkey],
   ];
+
+  let content = emoji;
+  if (url && !content.startsWith(":") && content.endsWith(":")) content = ":" + content + ":";
+
   const draft: DraftNostrEvent = {
-    kind: Kind.Reaction,
-    content: url ? ":" + emoji + ":" : emoji,
+    kind: kinds.Reaction,
+    content,
     tags: isReplaceable(event.kind) ? [...tags, ["a", getEventCoordinate(event)]] : tags,
     created_at: dayjs().unix(),
   };

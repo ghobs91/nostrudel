@@ -1,13 +1,13 @@
 import useReplaceableEvent from "./use-replaceable-event";
 import useCurrentAccount from "./use-current-account";
 import { USER_EMOJI_LIST_KIND } from "../helpers/nostr/emoji-packs";
-import { RequestOptions } from "../services/replaceable-event-requester";
+import { RequestOptions } from "../services/replaceable-events";
 
 export const FAVORITE_LISTS_IDENTIFIER = "agora-favorite-lists";
 
 export default function useFavoriteEmojiPacks(
   pubkey?: string,
-  additionalRelays: string[] = [],
+  additionalRelays?: Iterable<string>,
   opts: RequestOptions = {},
 ) {
   const account = useCurrentAccount();

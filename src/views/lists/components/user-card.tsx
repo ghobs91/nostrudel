@@ -2,31 +2,28 @@ import { Button, Card, CardBody, CardProps, Flex, Heading, Link } from "@chakra-
 import { Link as RouterLink } from "react-router-dom";
 import { nip19 } from "nostr-tools";
 
-import { useUserMetadata } from "../../../hooks/use-user-metadata";
-import { getUserDisplayName } from "../../../helpers/user-metadata";
-import UserAvatar from "../../../components/user-avatar";
-import { UserDnsIdentityIcon } from "../../../components/user-dns-identity-icon";
+import useUserMetadata from "../../../hooks/use-user-metadata";
+import { getUserDisplayName } from "../../../helpers/nostr/user-metadata";
+import UserAvatar from "../../../components/user/user-avatar";
+import { UserDnsIdentityIcon } from "../../../components/user/user-dns-identity-icon";
 import { NostrEvent } from "../../../types/nostr-event";
 import useAsyncErrorHandler from "../../../hooks/use-async-error-handler";
 import { listRemovePerson } from "../../../helpers/nostr/lists";
-import { useSigningContext } from "../../../providers/signing-provider";
-import NostrPublishAction from "../../../classes/nostr-publish-action";
-import clientRelaysService from "../../../services/client-relays";
 import useCurrentAccount from "../../../hooks/use-current-account";
-import { UserFollowButton } from "../../../components/user-follow-button";
+import { UserFollowButton } from "../../../components/user/user-follow-button";
+import { usePublishEvent } from "../../../providers/global/publish-provider";
 
 export type UserCardProps = { pubkey: string; relay?: string; list: NostrEvent } & Omit<CardProps, "children">;
 
 export default function UserCard({ pubkey, relay, list, ...props }: UserCardProps) {
   const account = useCurrentAccount();
+  const publish = usePublishEvent();
   const metadata = useUserMetadata(pubkey, relay ? [relay] : []);
-  const { requestSignature } = useSigningContext();
 
   const handleRemoveFromList = useAsyncErrorHandler(async () => {
     const draft = listRemovePerson(list, pubkey);
-    const signed = await requestSignature(draft);
-    const pub = new NostrPublishAction("Remove from list", clientRelaysService.getWriteUrls(), signed);
-  }, [list, requestSignature]);
+    publish("Remove from list", draft);
+  }, [list, publish]);
 
   return (
     <Card>

@@ -1,13 +1,13 @@
-import { Kind } from "nostr-tools";
+import { kinds } from "nostr-tools";
 
-import Subject from "../classes/subject";
-import { getEventUID } from "../helpers/nostr/events";
+import { getEventUID } from "../helpers/nostr/event";
 import { NostrEvent } from "../types/nostr-event";
+import ControlledObservable from "../classes/controlled-observable";
 
-const deleteEventStream = new Subject<NostrEvent>();
+const deleteEventStream = new ControlledObservable<NostrEvent>();
 
 function handleEvent(deleteEvent: NostrEvent) {
-  if (deleteEvent.kind !== Kind.EventDeletion) return;
+  if (deleteEvent.kind !== kinds.EventDeletion) return;
   deleteEventStream.next(deleteEvent);
 }
 

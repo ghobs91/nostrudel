@@ -2,9 +2,9 @@ import { Button, ButtonProps, useDisclosure } from "@chakra-ui/react";
 import { NostrEvent } from "../../../types/nostr-event";
 import ZapModal from "../../../components/event-zap-modal";
 import eventZapsService from "../../../services/event-zaps";
-import { getEventUID } from "../../../helpers/nostr/events";
+import { getEventUID } from "../../../helpers/nostr/event";
 import { getGoalRelays } from "../../../helpers/nostr/goal";
-import { useReadRelayUrls } from "../../../hooks/use-client-relays";
+import { useReadRelays } from "../../../hooks/use-client-relays";
 
 export default function GoalZapButton({
   goal,
@@ -12,7 +12,7 @@ export default function GoalZapButton({
 }: Omit<ButtonProps, "children" | "onClick"> & { goal: NostrEvent }) {
   const modal = useDisclosure();
 
-  const readRelays = useReadRelayUrls(getGoalRelays(goal));
+  const readRelays = useReadRelays(getGoalRelays(goal));
   const onZapped = async () => {
     modal.onClose();
     setTimeout(() => {

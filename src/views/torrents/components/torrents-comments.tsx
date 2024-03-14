@@ -2,11 +2,13 @@ import { memo, useMemo, useRef, useState } from "react";
 
 import { NostrEvent } from "../../../types/nostr-event";
 import { TORRENT_COMMENT_KIND } from "../../../helpers/nostr/torrents";
-import { useReadRelayUrls } from "../../../hooks/use-client-relays";
+import { useReadRelays } from "../../../hooks/use-client-relays";
 import useThreadTimelineLoader from "../../../hooks/use-thread-timeline-loader";
 import { ThreadItem, buildThread, countReplies } from "../../../helpers/thread";
 import { useTimelineCurserIntersectionCallback } from "../../../hooks/use-timeline-cursor-intersection-callback";
-import IntersectionObserverProvider, { useRegisterIntersectionEntity } from "../../../providers/intersection-observer";
+import IntersectionObserverProvider, {
+  useRegisterIntersectionEntity,
+} from "../../../providers/local/intersection-observer";
 import useAppSettings from "../../../hooks/use-app-settings";
 import {
   Alert,
@@ -20,21 +22,21 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import useClientSideMuteFilter from "../../../hooks/use-client-side-mute-filter";
-import UserAvatarLink from "../../../components/user-avatar-link";
-import UserLink from "../../../components/user-link";
-import { UserDnsIdentityIcon } from "../../../components/user-dns-identity-icon";
+import UserAvatarLink from "../../../components/user/user-avatar-link";
+import UserLink from "../../../components/user/user-link";
+import { UserDnsIdentityIcon } from "../../../components/user/user-dns-identity-icon";
 import Timestamp from "../../../components/timestamp";
 import Minus from "../../../components/icons/minus";
 import Expand01 from "../../../components/icons/expand-01";
-import { TrustProvider } from "../../../providers/trust";
-import { NoteContents } from "../../../components/note/text-note-contents";
-import NoteReactions from "../../../components/note/components/note-reactions";
+import { TrustProvider } from "../../../providers/local/trust";
 import { ReplyIcon } from "../../../components/icons";
-import ReplyForm from "../../note/components/reply-form";
+import ReplyForm from "../../thread/components/reply-form";
 import EventInteractionDetailsModal from "../../../components/event-interactions-modal";
-import NoteZapButton from "../../../components/note/note-zap-button";
 import useThreadColorLevelProps from "../../../hooks/use-thread-color-level-props";
 import TorrentCommentMenu from "./torrent-comment-menu";
+import NoteReactions from "../../../components/note/timeline-note/components/note-reactions";
+import NoteZapButton from "../../../components/note/note-zap-button";
+import { TextNoteContents } from "../../../components/note/timeline-note/text-note-contents";
 
 export const ThreadPost = memo(({ post, level = -1 }: { post: ThreadItem; level?: number }) => {
   const { showReactions } = useAppSettings();
@@ -89,7 +91,7 @@ export const ThreadPost = memo(({ post, level = -1 }: { post: ThreadItem; level?
     ) : (
       <>
         <TrustProvider event={post.event}>
-          <NoteContents event={post.event} pl="2" />
+          <TextNoteContents event={post.event} pl="2" />
         </TrustProvider>
       </>
     );
@@ -155,7 +157,7 @@ export const ThreadPost = memo(({ post, level = -1 }: { post: ThreadItem; level?
 });
 
 export default function TorrentComments({ torrent }: { torrent: NostrEvent }) {
-  const readRelays = useReadRelayUrls();
+  const readRelays = useReadRelays();
   const { timeline, events } = useThreadTimelineLoader(torrent, readRelays, TORRENT_COMMENT_KIND);
 
   const thread = useMemo(() => buildThread(events), [events]);

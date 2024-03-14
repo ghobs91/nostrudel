@@ -1,47 +1,39 @@
-import { MenuItem, useDisclosure } from "@chakra-ui/react";
+import { MenuItem, useToast } from "@chakra-ui/react";
 import { nip19 } from "nostr-tools";
 
-import { CustomMenuIconButton, MenuIconButtonProps } from "../../../components/menu-icon-button";
+import { DotsMenuButton, MenuIconButtonProps } from "../../../components/dots-menu-button";
 import { NostrEvent } from "../../../types/nostr-event";
-import { CodeIcon, CopyToClipboardIcon } from "../../../components/icons";
-import CommunityPostDebugModal from "../../../components/debug-modals/community-post-debug-modal";
+import { CopyToClipboardIcon } from "../../../components/icons";
 import CopyShareLinkMenuItem from "../../../components/common-menu-items/copy-share-link";
 import OpenInAppMenuItem from "../../../components/common-menu-items/open-in-app";
 import DeleteEventMenuItem from "../../../components/common-menu-items/delete-event";
+import DebugEventMenuItem from "../../../components/debug-modal/debug-event-menu-item";
 
 export default function CommunityPostMenu({
   event,
   approvals,
   ...props
 }: Omit<MenuIconButtonProps, "children"> & { event: NostrEvent; approvals: NostrEvent[] }) {
-  const debugModal = useDisclosure();
+  const toast = useToast();
 
   return (
     <>
-      <CustomMenuIconButton {...props}>
+      <DotsMenuButton {...props}>
         <OpenInAppMenuItem event={event} />
         <CopyShareLinkMenuItem event={event} />
         <MenuItem
-          onClick={() => window.navigator.clipboard.writeText(nip19.noteEncode(event.id))}
+          onClick={() => {
+            const text = nip19.noteEncode(event.id);
+            if (navigator.clipboard) navigator.clipboard.writeText(text);
+            else toast({ description: text, isClosable: true, duration: null });
+          }}
           icon={<CopyToClipboardIcon />}
         >
           Copy Note ID
         </MenuItem>
         <DeleteEventMenuItem event={event} label="Delete Post" />
-        <MenuItem onClick={debugModal.onOpen} icon={<CodeIcon />}>
-          View Raw
-        </MenuItem>
-      </CustomMenuIconButton>
-
-      {debugModal.isOpen && (
-        <CommunityPostDebugModal
-          event={event}
-          isOpen={debugModal.isOpen}
-          onClose={debugModal.onClose}
-          size="6xl"
-          approvals={approvals}
-        />
-      )}
+        <DebugEventMenuItem event={event} />
+      </DotsMenuButton>
     </>
   );
 }

@@ -2,12 +2,12 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Flex, IconButton, Text, useDisclosure } from "@chakra-ui/react";
 
-import { getUserDisplayName } from "../../helpers/user-metadata";
+import { getUserDisplayName } from "../../helpers/nostr/user-metadata";
 import useSubject from "../../hooks/use-subject";
-import { useUserMetadata } from "../../hooks/use-user-metadata";
+import useUserMetadata from "../../hooks/use-user-metadata";
 import accountService, { Account } from "../../services/account";
 import { AddIcon, ChevronDownIcon, ChevronUpIcon } from "../icons";
-import UserAvatar from "../user-avatar";
+import UserAvatar from "../user/user-avatar";
 import AccountInfoBadge from "../account-info-badge";
 import useCurrentAccount from "../../hooks/use-current-account";
 
@@ -22,9 +22,9 @@ function AccountItem({ account, onClick }: { account: Account; onClick?: () => v
 
   return (
     <Box display="flex" gap="2" alignItems="center" cursor="pointer">
-      <Flex as="button" onClick={handleClick} flex={1} gap="2">
+      <Flex as="button" onClick={handleClick} flex={1} gap="2" overflow="hidden" alignItems="center">
         <UserAvatar pubkey={pubkey} size="md" />
-        <Flex overflow="hidden" direction="column" alignItems="flex-start">
+        <Flex direction="column" overflow="hidden" alignItems="flex-start">
           <Text isTruncated>{getUserDisplayName(metadata, pubkey)}</Text>
           <AccountInfoBadge fontSize="0.7em" account={account} />
         </Flex>

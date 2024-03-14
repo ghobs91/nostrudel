@@ -5,24 +5,26 @@ import { useOutletContext } from "react-router-dom";
 
 import { ErrorBoundary, ErrorFallback } from "../../components/error-boundary";
 import { LightningIcon } from "../../components/icons";
-import { NoteLink } from "../../components/note-link";
-import UserAvatarLink from "../../components/user-avatar-link";
-import UserLink from "../../components/user-link";
+import { NoteLink } from "../../components/note/note-link";
+import UserAvatarLink from "../../components/user/user-avatar-link";
+import UserLink from "../../components/user/user-link";
 import { readablizeSats } from "../../helpers/bolt11";
 import { isProfileZap, isNoteZap, parseZapEvent, totalZaps } from "../../helpers/nostr/zaps";
 import useTimelineLoader from "../../hooks/use-timeline-loader";
 import { NostrEvent, isATag, isETag, isPTag } from "../../types/nostr-event";
-import { useAdditionalRelayContext } from "../../providers/additional-relay-context";
-import { useReadRelayUrls } from "../../hooks/use-client-relays";
+import { useAdditionalRelayContext } from "../../providers/local/additional-relay-context";
+import { useReadRelays } from "../../hooks/use-client-relays";
 import TimelineActionAndStatus from "../../components/timeline-page/timeline-action-and-status";
 import useSubject from "../../hooks/use-subject";
-import IntersectionObserverProvider, { useRegisterIntersectionEntity } from "../../providers/intersection-observer";
+import IntersectionObserverProvider, {
+  useRegisterIntersectionEntity,
+} from "../../providers/local/intersection-observer";
 import { useTimelineCurserIntersectionCallback } from "../../hooks/use-timeline-cursor-intersection-callback";
 import { EmbedableContent, embedUrls } from "../../helpers/embeds";
 import { embedNostrLinks, renderGenericUrl } from "../../components/embed-types";
 import Timestamp from "../../components/timestamp";
 import { EmbedEventNostrLink, EmbedEventPointer } from "../../components/embed-event";
-import { parseCoordinate } from "../../helpers/nostr/events";
+import { parseCoordinate } from "../../helpers/nostr/event";
 import VerticalPageLayout from "../../components/vertical-page-layout";
 
 const Zap = ({ zapEvent }: { zapEvent: NostrEvent }) => {
@@ -81,7 +83,7 @@ const UserZapsTab = () => {
   const { pubkey } = useOutletContext() as { pubkey: string };
   const [filter, setFilter] = useState("both");
   const contextRelays = useAdditionalRelayContext();
-  const relays = useReadRelayUrls(contextRelays);
+  const relays = useReadRelays(contextRelays);
 
   const eventFilter = useCallback(
     (event: NostrEvent) => {

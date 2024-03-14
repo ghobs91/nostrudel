@@ -1,10 +1,14 @@
-import { nip04, getPublicKey, finishEvent } from "nostr-tools";
+import { nip04, getPublicKey, finalizeEvent } from "nostr-tools";
+
 import { DraftNostrEvent, NostrEvent } from "../types/nostr-event";
 import { Account } from "./account";
 import db from "./db";
 import serialPortService from "./serial-port";
+import amberSignerService from "./amber-signer";
+import nostrConnectService from "./nostr-connect";
+import { hexToBytes } from "@noble/hashes/utils";
 
-const decryptedKeys = new Map<string, string>();
+const decryptedKeys = new Map<string, string | Promise<string>>();
 
 class SigningService {
   private async getSalt() {
@@ -24,7 +28,10 @@ class SigningService {
     );
     if (!password) throw new Error("Password required");
     const enc = new TextEncoder();
-    return window.crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits", "deriveKey"]);
+    return await window.crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, [
+      "deriveBits",
+      "deriveKey",
+    ]);
   }
   private async getEncryptionKey() {
     const salt = await this.getSalt();
@@ -51,7 +58,7 @@ class SigningService {
     const encrypted = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encode.encode(secKey));
 
     // add key to cache
-    decryptedKeys.set(getPublicKey(secKey), secKey);
+    decryptedKeys.set(getPublicKey(hexToBytes(secKey)), secKey);
 
     return {
       secKey: encrypted,
@@ -60,83 +67,135 @@ class SigningService {
   }
 
   async decryptSecKey(account: Account) {
-    if (!account.secKey) throw new Error("Account dose not have a secret key");
+    if (account.type !== "local") throw new Error("Account dose not have a secret key");
 
     const cache = decryptedKeys.get(account.pubkey);
-    if (cache) return cache;
+    if (cache) return await cache;
 
-    const key = await this.getEncryptionKey();
-    const decode = new TextDecoder();
+    // create a promise to decrypt the key
+    const p = (async () => {
+      const key = await this.getEncryptionKey();
+      const decode = new TextDecoder();
 
-    try {
-      const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: account.iv }, key, account.secKey);
-      const secKey = decode.decode(decrypted);
-      decryptedKeys.set(account.pubkey, secKey);
-      return secKey;
-    } catch (e) {
-      throw new Error("Failed to decrypt secret key");
-    }
+      try {
+        const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: account.iv }, key, account.secKey);
+        const secKey = decode.decode(decrypted);
+        decryptedKeys.set(account.pubkey, secKey);
+        return secKey;
+      } catch (e) {
+        console.log(e);
+        throw new Error("Failed to decrypt secret key");
+      }
+    })();
+
+    // cache the promise so its only called once
+    decryptedKeys.set(account.pubkey, p);
+
+    // await, return key
+    return await p;
   }
 
   async requestSignature(draft: DraftNostrEvent, account: Account) {
+    const checkSig = (signed: NostrEvent) => {
+      if (signed.pubkey !== account.pubkey) throw new Error("Signed with the wrong pubkey");
+    };
+
     if (account.readonly) throw new Error("Cant sign in readonly mode");
-    if (account.connectionType) {
-      if (account.connectionType === "extension") {
+
+    switch (account.type) {
+      case "local": {
+        const secKey = await this.decryptSecKey(account);
+        const tmpDraft = { ...draft, pubkey: getPublicKey(hexToBytes(secKey)) };
+        const event = finalizeEvent(tmpDraft, hexToBytes(secKey)) as NostrEvent;
+        return event;
+      }
+      case "extension":
         if (window.nostr) {
           const signed = await window.nostr.signEvent(draft);
-          if (signed.pubkey !== account.pubkey) throw new Error("Signed with the wrong pubkey!");
+          checkSig(signed);
           return signed;
         } else throw new Error("Missing nostr extension");
-      } else if (account.connectionType === "serial") {
+      case "serial":
         if (serialPortService.supported) {
           const signed = await serialPortService.signEvent(draft);
-          if (signed.pubkey !== account.pubkey) throw new Error("Signed with the wrong pubkey!");
+          checkSig(signed);
           return signed;
         } else throw new Error("Serial devices are not supported");
-      } else throw new Error("Unknown connection type " + account.connectionType);
-    } else if (account?.secKey) {
-      const secKey = await this.decryptSecKey(account);
-      const tmpDraft = { ...draft, pubkey: getPublicKey(secKey) };
-      const event = finishEvent(tmpDraft, secKey) as NostrEvent;
-
-      return event;
-    } else throw new Error("No signing method");
+      case "amber":
+        if (amberSignerService.supported) {
+          const signed = await amberSignerService.signEvent({ ...draft, pubkey: account.pubkey });
+          checkSig(signed);
+          return signed;
+        } else throw new Error("Cant use Amber on non-Android device");
+      case "nostr-connect":
+        const client = nostrConnectService.fromAccount(account);
+        await client.ensureConnected();
+        const signed = await client.signEvent({ ...draft, pubkey: account.pubkey });
+        checkSig(signed);
+        return signed;
+      default:
+        throw new Error("Unknown account type");
+    }
   }
 
   async requestDecrypt(data: string, pubkey: string, account: Account) {
     if (account.readonly) throw new Error("Cant decrypt in readonly mode");
-    if (account.connectionType) {
-      if (account.connectionType === "extension") {
+
+    switch (account.type) {
+      case "local":
+        const secKey = await this.decryptSecKey(account);
+        return await nip04.decrypt(secKey, pubkey, data);
+      case "extension":
         if (window.nostr) {
           if (window.nostr.nip04) {
             return await window.nostr.nip04.decrypt(pubkey, data);
           } else throw new Error("Extension dose not support decryption");
         } else throw new Error("Missing nostr extension");
-      } else if (account.connectionType === "serial") {
-        return await serialPortService.decrypt(pubkey, data);
-      } else throw new Error("Unknown connection type " + account.connectionType);
-    } else if (account?.secKey) {
-      const secKey = await this.decryptSecKey(account);
-      return await nip04.decrypt(secKey, pubkey, data);
-    } else throw new Error("No decryption method");
+      case "serial":
+        if (serialPortService.supported) {
+          return await serialPortService.nip04Decrypt(pubkey, data);
+        } else throw new Error("Serial devices are not supported");
+      case "amber":
+        if (amberSignerService.supported) {
+          return await amberSignerService.nip04Decrypt(pubkey, data);
+        } else throw new Error("Cant use Amber on non-Android device");
+      case "nostr-connect":
+        const client = nostrConnectService.fromAccount(account);
+        await client.ensureConnected();
+        return await client.nip04Decrypt(pubkey, data);
+      default:
+        throw new Error("Unknown account type");
+    }
   }
 
   async requestEncrypt(text: string, pubkey: string, account: Account) {
     if (account.readonly) throw new Error("Cant encrypt in readonly mode");
-    if (account.connectionType) {
-      if (account.connectionType === "extension") {
+
+    switch (account.type) {
+      case "local":
+        const secKey = await this.decryptSecKey(account);
+        return await nip04.encrypt(secKey, pubkey, text);
+      case "extension":
         if (window.nostr) {
           if (window.nostr.nip04) {
             return await window.nostr.nip04.encrypt(pubkey, text);
           } else throw new Error("Extension dose not support encryption");
         } else throw new Error("Missing nostr extension");
-      } else if (account.connectionType === "serial") {
-        return await serialPortService.encrypt(pubkey, text);
-      } else throw new Error("Unknown connection type " + account.connectionType);
-    } else if (account?.secKey) {
-      const secKey = await this.decryptSecKey(account);
-      return await nip04.encrypt(secKey, pubkey, text);
-    } else throw new Error("No encryption method");
+      case "serial":
+        if (serialPortService.supported) {
+          return await serialPortService.nip04Encrypt(pubkey, text);
+        } else throw new Error("Serial devices are not supported");
+      case "amber":
+        if (amberSignerService.supported) {
+          return await amberSignerService.nip04Encrypt(pubkey, text);
+        } else throw new Error("Cant use Amber on non-Android device");
+      case "nostr-connect":
+        const client = nostrConnectService.fromAccount(account);
+        await client.ensureConnected();
+        return await client.nip04Encrypt(pubkey, text);
+      default:
+        throw new Error("Unknown account type");
+    }
   }
 }
 

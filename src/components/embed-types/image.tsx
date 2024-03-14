@@ -1,8 +1,7 @@
 import { MouseEventHandler, MutableRefObject, forwardRef, useCallback, useMemo, useRef } from "react";
 import { Image, ImageProps, Link, LinkProps } from "@chakra-ui/react";
 
-import appSettings from "../../services/settings/app-settings";
-import { useTrusted } from "../../providers/trust";
+import { useTrustContext } from "../../providers/local/trust";
 import { EmbedableContent, defaultGetLocation } from "../../helpers/embeds";
 import { getMatchLink } from "../../helpers/regexp";
 import { useRegisterSlide } from "../lightbox-provider";
@@ -10,15 +9,15 @@ import { isImageURL } from "../../helpers/url";
 import PhotoGallery, { PhotoWithoutSize } from "../photo-gallery";
 import { NostrEvent } from "../../types/nostr-event";
 import useAppSettings from "../../hooks/use-app-settings";
-import { useBreakpointValue } from "../../providers/breakpoint-provider";
-import useElementBlur from "../../hooks/use-element-blur";
+import { useBreakpointValue } from "../../providers/global/breakpoint-provider";
+import useElementTrustBlur from "../../hooks/use-element-trust-blur";
+import { buildImageProxyURL } from "../../helpers/image";
 
 export type TrustImageProps = ImageProps;
 
 export const TrustImage = forwardRef<HTMLImageElement, TrustImageProps>((props, ref) => {
   const { blurImages } = useAppSettings();
-  const trusted = useTrusted();
-  const { onClick, style } = useElementBlur(!trusted);
+  const { onClick, style } = useElementTrustBlur();
 
   const handleClick = useCallback<MouseEventHandler<HTMLImageElement>>(
     (e) => {
@@ -41,7 +40,7 @@ export type EmbeddedImageProps = Omit<LinkProps, "children" | "href" | "onClick"
 };
 
 function useImageThumbnail(src?: string) {
-  return appSettings.value.imageProxy ? new URL(`/256,fit/${src}`, appSettings.value.imageProxy).toString() : src;
+  return (src && buildImageProxyURL(src, "256,fit")) ?? src;
 }
 
 export const EmbeddedImage = forwardRef<HTMLImageElement, EmbeddedImageProps>(

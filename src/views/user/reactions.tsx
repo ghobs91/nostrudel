@@ -5,19 +5,21 @@ import { nip25 } from "nostr-tools";
 
 import useTimelineLoader from "../../hooks/use-timeline-loader";
 import { NostrEvent } from "../../types/nostr-event";
-import { useAdditionalRelayContext } from "../../providers/additional-relay-context";
-import { useReadRelayUrls } from "../../hooks/use-client-relays";
+import { useAdditionalRelayContext } from "../../providers/local/additional-relay-context";
+import { useReadRelays } from "../../hooks/use-client-relays";
 import TimelineActionAndStatus from "../../components/timeline-page/timeline-action-and-status";
 import useSubject from "../../hooks/use-subject";
-import IntersectionObserverProvider, { useRegisterIntersectionEntity } from "../../providers/intersection-observer";
+import IntersectionObserverProvider, {
+  useRegisterIntersectionEntity,
+} from "../../providers/local/intersection-observer";
 import { useTimelineCurserIntersectionCallback } from "../../hooks/use-timeline-cursor-intersection-callback";
-import { TrustProvider } from "../../providers/trust";
-import UserAvatar from "../../components/user-avatar";
-import UserLink from "../../components/user-link";
-import NoteMenu from "../../components/note/note-menu";
+import { TrustProvider } from "../../providers/local/trust";
+import UserAvatar from "../../components/user/user-avatar";
+import UserLink from "../../components/user/user-link";
 import { EmbedEventPointer } from "../../components/embed-event";
 import { embedEmoji } from "../../components/embed-types";
 import VerticalPageLayout from "../../components/vertical-page-layout";
+import NoteMenu from "../../components/note/note-menu";
 
 const Reaction = ({ reaction: reaction }: { reaction: NostrEvent }) => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -47,7 +49,7 @@ const Reaction = ({ reaction: reaction }: { reaction: NostrEvent }) => {
 export default function UserReactionsTab() {
   const { pubkey } = useOutletContext() as { pubkey: string };
   const contextRelays = useAdditionalRelayContext();
-  const readRelays = useReadRelayUrls(contextRelays);
+  const readRelays = useReadRelays(contextRelays);
 
   const timeline = useTimelineLoader(`${pubkey}-likes`, readRelays, { authors: [pubkey], kinds: [7] });
 

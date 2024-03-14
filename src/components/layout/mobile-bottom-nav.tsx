@@ -7,6 +7,7 @@ import { PostModalContext } from "../../providers/post-modal-provider";
 import { DirectMessagesIcon, HomeIcon, NotesIcon, NotificationsIcon, PlusCircleIcon, SearchIcon } from "../icons";
 import UserAvatar from "../user-avatar";
 import MobileSideDrawer from "./mobile-side-drawer";
+import Rocket02 from "../icons/rocket-02";
 
 export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -67,6 +68,12 @@ export default function MobileBottomNav(props: Omit<FlexProps, "children">) {
           flexGrow="1"
           size="md"
           className="mobile-nav-button"
+        />
+        <IconButton
+          icon={<Rocket02 boxSize={6} />}
+          aria-label="Launchpad"
+          onClick={() => navigate("/launchpad")}
+          isDisabled={account?.readonly ?? true}
         />
       </Flex>
       <MobileSideDrawer isOpen={isOpen} onClose={onClose} />

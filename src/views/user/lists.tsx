@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Divider, Heading, SimpleGrid } from "@chakra-ui/react";
+import { Heading, SimpleGrid } from "@chakra-ui/react";
+import { kinds } from "nostr-tools";
 
-import { useAdditionalRelayContext } from "../../providers/additional-relay-context";
+import { useAdditionalRelayContext } from "../../providers/local/additional-relay-context";
 import useTimelineLoader from "../../hooks/use-timeline-loader";
 import useSubject from "../../hooks/use-subject";
 import {
@@ -13,14 +14,13 @@ import {
   PIN_LIST_KIND,
   isJunkList,
 } from "../../helpers/nostr/lists";
-import { getEventUID } from "../../helpers/nostr/events";
+import { getEventUID } from "../../helpers/nostr/event";
 import ListCard from "../lists/components/list-card";
-import IntersectionObserverProvider from "../../providers/intersection-observer";
+import IntersectionObserverProvider from "../../providers/local/intersection-observer";
 import { useTimelineCurserIntersectionCallback } from "../../hooks/use-timeline-cursor-intersection-callback";
-import { Kind } from "nostr-tools";
 import VerticalPageLayout from "../../components/vertical-page-layout";
 import { NostrEvent } from "../../types/nostr-event";
-import UserName from "../../components/user-name";
+import UserName from "../../components/user/user-name";
 
 export default function UserListsTab() {
   const { pubkey } = useOutletContext() as { pubkey: string };
@@ -59,7 +59,7 @@ export default function UserListsTab() {
           Special lists
         </Heading>
         <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing="2">
-          <ListCard cord={`${Kind.Contacts}:${pubkey}`} hideCreator />
+          <ListCard cord={`${kinds.Contacts}:${pubkey}`} hideCreator />
           <ListCard cord={`${MUTE_LIST_KIND}:${pubkey}`} hideCreator />
           <ListCard cord={`${PIN_LIST_KIND}:${pubkey}`} hideCreator />
           <ListCard cord={`${BOOKMARK_LIST_KIND}:${pubkey}`} hideCreator />

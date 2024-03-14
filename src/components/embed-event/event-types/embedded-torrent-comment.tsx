@@ -2,21 +2,21 @@ import { Card, CardProps, Flex, LinkBox, Spacer, Text } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 
 import { NostrEvent } from "../../../types/nostr-event";
-import UserAvatarLink from "../../user-avatar-link";
-import UserLink from "../../user-link";
+import UserAvatarLink from "../../user/user-avatar-link";
+import UserLink from "../../user/user-link";
 import useSubject from "../../../hooks/use-subject";
 import appSettings from "../../../services/settings/app-settings";
-import EventVerificationIcon from "../../event-verification-icon";
-import { TrustProvider } from "../../../providers/trust";
+import EventVerificationIcon from "../../common-event/event-verification-icon";
+import { TrustProvider } from "../../../providers/local/trust";
 import Timestamp from "../../timestamp";
-import { getNeventForEventId } from "../../../helpers/nip19";
 import { CompactNoteContent } from "../../compact-note-content";
 import HoverLinkOverlay from "../../hover-link-overlay";
-import { getReferences } from "../../../helpers/nostr/events";
+import { getThreadReferences } from "../../../helpers/nostr/event";
 import useSingleEvent from "../../../hooks/use-single-event";
 import { getTorrentTitle } from "../../../helpers/nostr/torrents";
 import { useNavigateInDrawer } from "../../../providers/drawer-sub-view-provider";
 import { MouseEventHandler, useCallback } from "react";
+import { nip19 } from "nostr-tools";
 
 export default function EmbeddedTorrentComment({
   comment,
@@ -24,9 +24,9 @@ export default function EmbeddedTorrentComment({
 }: Omit<CardProps, "children"> & { comment: NostrEvent }) {
   const navigate = useNavigateInDrawer();
   const { showSignatureVerification } = useSubject(appSettings);
-  const refs = getReferences(comment);
-  const torrent = useSingleEvent(refs.rootId, refs.rootRelay ? [refs.rootRelay] : []);
-  const linkToTorrent = refs.rootId && `/torrents/${getNeventForEventId(refs.rootId)}`;
+  const refs = getThreadReferences(comment);
+  const torrent = useSingleEvent(refs.root?.e?.id, refs.root?.e?.relays);
+  const linkToTorrent = refs.root?.e && `/torrents/${nip19.neventEncode(refs.root.e)}`;
 
   const handleClick = useCallback<MouseEventHandler>(
     (e) => {

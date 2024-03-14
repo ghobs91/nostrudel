@@ -5,6 +5,7 @@ import { safeJson } from "../../helpers/parse";
 export type AppSettingsV0 = {
   version: 0;
   colorMode: ColorModeWithSystem;
+  defaultRelays: string[];
   blurImages: boolean;
   autoShowMedia: boolean;
   proxyUserMedia: boolean;
@@ -31,41 +32,27 @@ export type AppSettingsV2 = Omit<AppSettingsV1, "version"> & { version: 2; theme
 export type AppSettingsV3 = Omit<AppSettingsV2, "version"> & { version: 3; quickReactions: string[] };
 export type AppSettingsV4 = Omit<AppSettingsV3, "version"> & { version: 4; loadOpenGraphData: boolean };
 export type AppSettingsV5 = Omit<AppSettingsV4, "version"> & { version: 5; hideUsernames: boolean };
+export type AppSettingsV6 = Omit<AppSettingsV5, "version"> & { version: 6; noteDifficulty: number | null };
+export type AppSettingsV7 = Omit<AppSettingsV6, "version"> & { version: 7; autoDecryptDMs: boolean };
 
-export function isV0(settings: { version: number }): settings is AppSettingsV0 {
-  return settings.version === undefined || settings.version === 0;
-}
-export function isV1(settings: { version: number }): settings is AppSettingsV1 {
-  return settings.version === 1;
-}
-export function isV2(settings: { version: number }): settings is AppSettingsV2 {
-  return settings.version === 2;
-}
-export function isV3(settings: { version: number }): settings is AppSettingsV3 {
-  return settings.version === 3;
-}
-export function isV4(settings: { version: number }): settings is AppSettingsV4 {
-  return settings.version === 4;
-}
-export function isV5(settings: { version: number }): settings is AppSettingsV5 {
-  return settings.version === 5;
-}
-
-export type AppSettings = AppSettingsV5;
+export type AppSettings = AppSettingsV7;
 
 export const defaultSettings: AppSettings = {
-  version: 5,
+  version: 7,
   theme: "default",
   colorMode: "system",
+  defaultRelays: ["wss://relay.damus.io", "wss://nostr.wine", "wss://nos.lol", "wss://welcome.nostr.wine"],
   maxPageWidth: "none",
   blurImages: true,
-  // nostr:nevent1qqsxvkjgpc6zhydj4rxjpl0frev7hmgynruq027mujdgy2hwjypaqfspzpmhxue69uhkummnw3ezuamfdejszythwden5te0dehhxarjw4jjucm0d5sfntd0
   hideUsernames: false,
   autoShowMedia: true,
   proxyUserMedia: false,
   loadOpenGraphData: true,
   showReactions: true,
   showSignatureVerification: false,
+  noteDifficulty: null,
+
+  autoDecryptDMs: false,
 
   quickReactions: ["🤙", "❤️", "🤣", "😍", "🔥"],
 
@@ -82,13 +69,7 @@ export const defaultSettings: AppSettings = {
 };
 
 export function upgradeSettings(settings: { version: number }): AppSettings | null {
-  if (isV0(settings)) return { ...defaultSettings, ...settings, version: 5 };
-  if (isV1(settings)) return { ...defaultSettings, ...settings, version: 5 };
-  if (isV2(settings)) return { ...defaultSettings, ...settings, version: 5 };
-  if (isV3(settings)) return { ...defaultSettings, ...settings, version: 5 };
-  if (isV4(settings)) return { ...defaultSettings, ...settings, version: 5 };
-  if (isV5(settings)) return settings;
-  return null;
+  return { ...defaultSettings, ...settings, version: 7 };
 }
 
 export function parseAppSettings(event: NostrEvent): AppSettings {

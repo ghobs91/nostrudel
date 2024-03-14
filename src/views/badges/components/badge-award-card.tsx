@@ -5,12 +5,12 @@ import { Link as RouterLink } from "react-router-dom";
 import { getBadgeAwardBadge, getBadgeAwardPubkeys, getBadgeImage, getBadgeName } from "../../../helpers/nostr/badges";
 import useReplaceableEvent from "../../../hooks/use-replaceable-event";
 import { NostrEvent } from "../../../types/nostr-event";
-import { useRegisterIntersectionEntity } from "../../../providers/intersection-observer";
-import { getEventUID } from "../../../helpers/nostr/events";
+import { useRegisterIntersectionEntity } from "../../../providers/local/intersection-observer";
+import { getEventUID } from "../../../helpers/nostr/event";
 import { getSharableEventAddress } from "../../../helpers/nip19";
-import UserLink from "../../../components/user-link";
+import UserLink from "../../../components/user/user-link";
 import Timestamp from "../../../components/timestamp";
-import UserAvatarLink from "../../../components/user-avatar-link";
+import UserAvatarLink from "../../../components/user/user-avatar-link";
 
 const UserCard = memo(({ pubkey }: { pubkey: string }) => (
   <Flex gap="2" alignItems="center">

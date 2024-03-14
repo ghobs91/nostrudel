@@ -1,58 +1,22 @@
-import db from "./db";
-import { Kind } from "nostr-tools";
+import { kinds } from "nostr-tools";
 import _throttle from "lodash.throttle";
 
-import { NostrEvent } from "../types/nostr-event";
-import { Kind0ParsedContent, getSearchNames, parseKind0Event } from "../helpers/user-metadata";
+import { Kind0ParsedContent, parseMetadataContent } from "../helpers/nostr/user-metadata";
 import SuperMap from "../classes/super-map";
 import Subject from "../classes/subject";
-import replaceableEventLoaderService, { RequestOptions } from "./replaceable-event-requester";
-
-const WRITE_USER_SEARCH_BATCH_TIME = 500;
+import replaceableEventsService, { RequestOptions } from "./replaceable-events";
 
 class UserMetadataService {
-  private parsedSubjects = new SuperMap<string, Subject<Kind0ParsedContent>>((pubkey) => {
-    const sub = new Subject<Kind0ParsedContent>();
-    sub.subscribe((metadata) => {
-      if (metadata) {
-        this.writeSearchQueue.add(pubkey);
-        this.writeSearchDataThrottle();
-      }
-    });
-    return sub;
+  private metadata = new SuperMap<string, Subject<Kind0ParsedContent>>((pubkey) => {
+    return replaceableEventsService.getEvent(0, pubkey).map(parseMetadataContent);
   });
   getSubject(pubkey: string) {
-    return this.parsedSubjects.get(pubkey);
+    return this.metadata.get(pubkey);
   }
-  requestMetadata(pubkey: string, relays: string[], opts: RequestOptions = {}) {
-    const sub = this.parsedSubjects.get(pubkey);
-    const requestSub = replaceableEventLoaderService.requestEvent(relays, Kind.Metadata, pubkey, undefined, opts);
-    sub.connectWithHandler(requestSub, (event, next) => next(parseKind0Event(event)));
-    return sub;
-  }
-
-  receiveEvent(event: NostrEvent) {
-    replaceableEventLoaderService.handleEvent(event);
-  }
-
-  private writeSearchQueue = new Set<string>();
-  private writeSearchDataThrottle = _throttle(this.writeSearchData.bind(this), WRITE_USER_SEARCH_BATCH_TIME);
-  private async writeSearchData() {
-    if (this.writeSearchQueue.size === 0) return;
-
-    const keys = Array.from(this.writeSearchQueue);
-    this.writeSearchQueue.clear();
-
-    const transaction = db.transaction("userSearch", "readwrite");
-    for (const pubkey of keys) {
-      const metadata = this.getSubject(pubkey).value;
-      if (metadata) {
-        const names = getSearchNames(metadata);
-        transaction.objectStore("userSearch").put({ pubkey, names });
-      }
-    }
-    transaction.commit();
-    await transaction.done;
+  requestMetadata(pubkey: string, relays: Iterable<string>, opts: RequestOptions = {}) {
+    const subject = this.metadata.get(pubkey);
+    replaceableEventsService.requestEvent(relays, kinds.Metadata, pubkey, undefined, opts);
+    return subject;
   }
 }
 
@@ -66,7 +30,7 @@ if (import.meta.env.DEV) {
 // random helper for logging
 export function nameOrPubkey(pubkey: string) {
   const parsed = userMetadataService.getSubject(pubkey).value;
-  return parsed?.name || parsed?.display_name || pubkey;
+  return parsed?.displayName || parsed?.display_name || parsed?.name || pubkey;
 }
 
 export default userMetadataService;

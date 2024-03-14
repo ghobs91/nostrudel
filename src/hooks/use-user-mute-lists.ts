@@ -3,9 +3,13 @@ import { useMemo } from "react";
 import useReplaceableEvent from "./use-replaceable-event";
 import { PEOPLE_LIST_KIND, getPubkeysFromList } from "../helpers/nostr/lists";
 import useUserMuteList from "./use-user-mute-list";
-import { RequestOptions } from "../services/replaceable-event-requester";
+import { RequestOptions } from "../services/replaceable-events";
 
-export default function useUserMuteLists(pubkey?: string, additionalRelays: string[] = [], opts: RequestOptions = {}) {
+export default function useUserMuteLists(
+  pubkey?: string,
+  additionalRelays?: Iterable<string>,
+  opts: RequestOptions = {},
+) {
   const muteList = useUserMuteList(pubkey, additionalRelays, opts);
   const altMuteList = useReplaceableEvent(
     pubkey && { kind: PEOPLE_LIST_KIND, pubkey, identifier: "mute" },

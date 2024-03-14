@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Center } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Kind0ParsedContent } from "../../helpers/user-metadata";
+import { Kind0ParsedContent } from "../../helpers/nostr/user-metadata";
 import NameStep from "./name-step";
 import ProfileImageStep from "./profile-image-step";
 import RelayStep from "./relay-step";
@@ -33,7 +33,7 @@ export default function SignupView() {
       case "profile":
         return (
           <ProfileImageStep
-            displayName={metadata.display_name}
+            displayName={metadata.displayName}
             onSubmit={(file) => {
               setProfileImage(file);
               navigate("/signup/relays");
@@ -72,8 +72,8 @@ export default function SignupView() {
   };
 
   return (
-    <Center w="full" h="full">
+    <Flex direction="column" alignItems="center" gap="2" w="full" px="4" py="10">
       {renderStep()}
-    </Center>
+    </Flex>
   );
 }

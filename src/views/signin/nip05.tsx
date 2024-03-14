@@ -73,7 +73,7 @@ export default function LoginNip05View() {
         }
       }
 
-      accountService.addAccount({ pubkey, relays: Array.from(bootstrapRelays), readonly: true });
+      accountService.addAccount({ type: "pubkey", pubkey, relays: Array.from(bootstrapRelays), readonly: true });
     }
 
     accountService.switchAccount(pubkey);
@@ -123,7 +123,7 @@ export default function LoginNip05View() {
               placeholder="wss://nostr.example.com"
               isRequired
               value={relayUrl}
-              onChange={(url) => setRelayUrl(url)}
+              onChange={(e) => setRelayUrl(e.target.value)}
             />
             <FormHelperText>The first relay to connect to.</FormHelperText>
           </FormControl>

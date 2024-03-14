@@ -1,5 +1,107 @@
 # nostrudel
 
+## 0.39.0
+
+### Minor Changes
+
+- 15cb30d: Add "open in" modal (NIP-89)
+- 16ae69c: Add event publisher tool
+- b88ecd2: Added Event Console tool
+- e053e5d: Add option to automatically decrypt DMs
+
+### Patch Changes
+
+- df094b2: Rebuild observable class
+- 3359064: Add UI tab to relays
+- a967cc8: Fix custom emoji reactions having multiple colons
+- cfa0461: Fix jsonl database export format
+- 45e447c: Fix auto-playing blurred videos
+- 3a8bea9: Fix bunker://pubkey connect URIs
+- 0c36f57: Fix profile form removing unknown metadata fields
+- 45e447c: Unblur all images when clicking on a note
+- bcb3ff8: Update emojilib
+
+## 0.38.4
+
+### Patch Changes
+
+- 64c2bb3: Fix translation selector stuck on english
+
+## 0.38.3
+
+### Patch Changes
+
+- Add option to use NIP-65 relays on relay prompt
+
+## 0.38.2
+
+### Patch Changes
+
+- ad6e51e: Add explanations to relay views
+
+## 0.38.1
+
+### Patch Changes
+
+- Always use the bitcoin connect webln
+
+## 0.38.0
+
+### Minor Changes
+
+- e8e3dc0: Support for nsecBunker OAuth flow
+- 31a649e: Add offline mode
+- 3bae870: Restore scroll position when returning to the timeline
+- fd6ce3e: Show unavailable events in threads
+- bbf5b0e: Add POW option when writing note
+- 91f4c7c: Overhaul core relay code
+- aaa6208: Support kind 16 generic reposts
+- f965281: Support using nostr-relay-tray as cache relay
+- 5831791: Rebuild tools menu
+- 7640beb: Improve display of unknown events
+- d1af1e1: Add track view for stemstr tracks
+- 92fe0bb: Support for local image proxy and cors servers
+- 1731b66: Show Videos and articles on bookmark list
+- 9fa2ae4: Add threads notifications view
+- 33ff50f: Support for bunker://npub@relay NIP-46 login
+- 05b4ca2: Add search when selecting list in feed
+- be49839: Improve channel message layout
+- a39e6ad: Add NIP-66 relay stats service
+- 1191d99: Add NIP definitions when hovering over "NIP-xx"
+- c744751: Add messages to launchpad
+- 075fb4e: Add simple bookmarks view
+- 1888caa: Build simple flare video page
+- d9225ed: Add support for .mp3 and .wav urls
+- ad53ed1: Add Simple Satellite CDN view
+- c3bcfe4: Remove ackee
+- 1f77a48: Add CACHE_RELAY option to docker container
+
+### Patch Changes
+
+- 065a90f: Show quotes as mentions in notifications
+- 4fb0faa: count nevent and naddr as pubkey mentions
+- 5831791: Show NIP-05 verified icons in @ mentions
+- 0972691: Fix issue with search relays getting reset
+- c744751: Fix bug with stuck timelines
+- 3204258: Upgrade nostr-tools to v2
+
+## 0.37.1
+
+### Patch Changes
+
+- feec6880: Fix storage and clipboard use on http connection
+
+## 0.37.0
+
+### Minor Changes
+
+- 53b2c9e3: Add reactions and zaps to DMs
+- 98b4bef4: Add support for threads in DMs
+- 43faa025: Add support for Amber signer
+- 53b2c9e3: Make DMs view more readable
+- 53b2c9e3: Add support for NIP-46 signer
+- ca4d6df8: Support NIP-31 on unknown event kinds
+
 ## 0.36.0
 
 ### Minor Changes
