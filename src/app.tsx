@@ -91,7 +91,6 @@ import BookmarksView from "./views/bookmarks";
 import LoginNostrAddressView from "./views/signin/address";
 import LoginNostrAddressCreate from "./views/signin/address/create";
 const TracksView = lazy(() => import("./views/tracks"));
-import DiscoverView from "./views/relays/relay/discover-view"
 const UserTracksTab = lazy(() => import("./views/user/tracks"));
 const UserVideosTab = lazy(() => import("./views/user/videos"));
 
@@ -279,7 +278,6 @@ const router = createHashRouter([
         ],
       },
       { path: "r/:relay", element: <RelayView /> },
-      { path: "discover", element: <DiscoverView /> },
       {
         path: "notifications",
         children: [
