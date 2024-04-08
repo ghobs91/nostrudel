@@ -67,7 +67,7 @@ class SigningService {
   }
 
   async decryptSecKey(account: Account) {
-    if (account.type !== "local") throw new Error("Account dose not have a secret key");
+    if (account.type !== "local") throw new Error("Account does not have a secret key");
 
     const cache = decryptedKeys.get(account.pubkey);
     if (cache) return await cache;

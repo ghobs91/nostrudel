@@ -48,3 +48,58 @@ body,
   border-radius: 10px;
   padding: 10px;
 }
+
+.chakra-container {
+  padding-left: 5px;
+}
+
+
+.css-1v52qd {
+  margin: 10px;
+}
+.css-uu3gtp {
+  margin-top: 10px;
+}
+.chakra-card {
+  border-color: #18181c !important;
+  border-radius: .75rem;
+  background-color: #18181c !important;
+  box-shadow: 0 0 10px #000000bf;
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-bottom: 15px
+}
+.chakra-button {
+  border-radius: 5px;
+}
+.css-1v52qd {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.css-1n9ebf6 {
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.css-7w0fqo {
+  margin-top: 90px !important;
+}
+
+.css-z5epub {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.link-preview-container {
+  margin-bottom: 15px;
+}
+.css-2xph3x {
+  border: 1px solid;
+  border-top-color: currentcolor;
+  border-right-color: currentcolor;
+  border-bottom-color: currentcolor;
+  border-left-color: currentcolor;
+  border-color: #8c8c8e;
+  border-radius: .75rem;
+  padding: 10px 10px 20px;
+}
